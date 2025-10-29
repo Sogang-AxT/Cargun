@@ -57,6 +57,20 @@ public class Interface : MonoBehaviour
             else if (GameManager.Instance.currentPhase == "combat" && Timer_Combat != null)
             {
                 Timer_Combat.text = $"{minutes}:{seconds:00}";
+
+                // ✅ 디버깅: 타이머 값 확인 (5초마다)
+                if (Time.frameCount % 300 == 0)
+                {
+                    Debug.Log($"[Interface Timer] Combat Timer: {minutes}:{seconds:00} (raw: {timer:F2})");
+                }
+            }
+        }
+        else
+        {
+            // ✅ GameManager가 없으면 경고
+            if (Time.frameCount % 300 == 0)
+            {
+                Debug.LogWarning("[Interface] GameManager.Instance is NULL!");
             }
         }
 

@@ -22,13 +22,13 @@ public class Turret : MonoBehaviour
     private float angleD = 135f;
 
     [Header("Turret Limits")]
-    private Vector2 limitA = new Vector2(150f, 0f); // 150~0 (�����δ� 0~150)
-    private Vector2 limitB = new Vector2(210f, 360f);
-    private Vector2 limitC = new Vector2(180f, 330f);
-    private Vector2 limitD = new Vector2(30f, 180f);
+    private Vector2 limitA = new Vector2(0f, 150f); // 0~150도 (12시 → 4시 반시계)
+    private Vector2 limitB = new Vector2(210f, 360f); // 210~360도 (5시 → 12시 반시계, 360은 0과 같음)
+    private Vector2 limitC = new Vector2(180f, 330f); // 180~330도 (6시 → 9시 반시계)
+    private Vector2 limitD = new Vector2(30f, 180f); // 30~180도 (1시 → 6시 반시계)
 
     [Header("Fire Rate")]
-    public float fireRate = 0.5f; // 0.5�ʸ��� �߻�
+    public float fireRate = 0.5f; // 0.5초마다 발사
     private float[] nextFireTime = new float[4];
 
     [Header("Shooting")]
@@ -52,13 +52,13 @@ public class Turret : MonoBehaviour
 
     void Start()
     {
-        // �ʱ� ����: ��� �ͷ� Disconnect
+        // 초기 상태: 모든 터렛 Disconnect
         SetTurretSprite(TurretA, Dis);
         SetTurretSprite(TurretB, Dis);
         SetTurretSprite(TurretC, Dis);
         SetTurretSprite(TurretD, Dis);
 
-        // Angle ǥ�� ��Ȱ��ȭ
+        // Angle 표시 비활성화
         if (AngleA != null) AngleA.SetActive(false);
         if (AngleB != null) AngleB.SetActive(false);
         if (AngleC != null) AngleC.SetActive(false);
@@ -67,38 +67,38 @@ public class Turret : MonoBehaviour
 
     void Update()
     {
-        // �÷��̾� �Ҵ� ������Ʈ
+        // 플레이어 할당 업데이트
         UpdatePlayerAssignment();
 
-        // �ڵ� �߻�
+        // 자동 발사
         if (canShoot)
         {
             AutoFire();
         }
 
-        // �ͷ� ȸ�� (�������ϰ�)
+        // 터렛 회전 (스무스하게)
         SmoothRotateTurrets();
     }
 
-    // �÷��̾� �Ҵ� ������Ʈ
+    // 플레이어 할당 업데이트
     void UpdatePlayerAssignment()
     {
         if (Server.Instance == null) return;
 
-        // ���� �Ҵ� �ʱ�ȭ
+        // 기존 할당 초기화
         turretAssignment.Clear();
 
-        // �÷��̾� ��Ͽ��� �ͷ� �Ҵ� ��������
+        // 플레이어 목록에서 터렛 할당 가져오기
         foreach (var player in Server.Instance.players.Values)
         {
             turretAssignment[player.turret] = player.color;
         }
 
-        // Sprite ������Ʈ
+        // Sprite 업데이트
         UpdateTurretSprites();
     }
 
-    // �ͷ� Sprite ������Ʈ
+    // 터렛 Sprite 업데이트
     void UpdateTurretSprites()
     {
         UpdateSingleTurret("A", TurretA, AngleA);
@@ -111,7 +111,7 @@ public class Turret : MonoBehaviour
     {
         if (turretAssignment.ContainsKey(turretName))
         {
-            // �÷��̾� �Ҵ��
+            // 플레이어 할당됨
             string color = turretAssignment[turretName];
             Sprite colorSprite = GetSpriteByColor(color);
             SetTurretSprite(spriteRenderer, colorSprite);
@@ -120,7 +120,7 @@ public class Turret : MonoBehaviour
         }
         else
         {
-            // �Ҵ� �ȵ�
+            // 할당 안됨
             SetTurretSprite(spriteRenderer, Dis);
             if (angleObject != null) angleObject.SetActive(false);
         }
@@ -146,50 +146,101 @@ public class Turret : MonoBehaviour
         }
     }
 
-    // �������� ���� ������ �ͷ� ������Ʈ
-    public void UpdateTurretAngle(string turret, float angle)
+    // ✅ 모바일에서 받은 조이스틱 각도를 Unity RotationZ로 변환 후 업데이트
+    public void UpdateTurretAngle(string turret, float joystickAngle)
     {
+        // 조이스틱 각도 → Unity RotationZ 변환
+        // 조이스틱: 0° = 3시, 90° = 6시, 180° = 9시, 270° = 12시 (시계방향)
+        // Unity Z: 0° = 12시, 90° = 9시, 180° = 6시, 270° = 3시 (반시계방향)
+        // 변환 공식: unityAngle = (joystickAngle - 90 + 360) % 360
+        // 또는: unityAngle = (270 - joystickAngle + 360) % 360
+        float unityAngle = (270f - joystickAngle + 360f) % 360f;
+
         switch (turret)
         {
             case "A":
-                angleA = ClampAngle(angle, limitA);
+                angleA = ClampAngle(unityAngle, limitA);
                 break;
             case "B":
-                angleB = ClampAngle(angle, limitB);
+                angleB = ClampAngle(unityAngle, limitB);
                 break;
             case "C":
-                angleC = ClampAngle(angle, limitC);
+                angleC = ClampAngle(unityAngle, limitC);
                 break;
             case "D":
-                angleD = ClampAngle(angle, limitD);
+                angleD = ClampAngle(unityAngle, limitD);
                 break;
         }
     }
 
-    // ���� ����
+    // ✅ 각도 제한 (Clamp)
     float ClampAngle(float angle, Vector2 limit)
     {
-        // limit.x�� �� ū ��� (��: 210~360)
-        if (limit.x > limit.y)
+        // 각도를 0~360 범위로 정규화
+        angle = NormalizeAngle(angle);
+
+        float min = limit.x;
+        float max = limit.y;
+
+        // 범위가 360도를 넘는 경우 (예: 210~360, 실제로는 210~0)
+        if (min > max)
         {
-            if (angle < limit.x && angle > limit.y)
+            // max를 실제 각도로 변환 (360 = 0)
+            // 예: 210~360 → 210~0 범위
+            // 각도가 범위 안에 있는지 확인
+            if (angle >= min || angle <= max)
             {
-                // ���� ��: ����� ������
-                if (angle - limit.y < limit.x - angle)
-                    return limit.y;
-                else
-                    return limit.x;
+                // 범위 안: 그대로 반환
+                return angle;
+            }
+            else
+            {
+                // 범위 밖: 가장 가까운 경계로
+                float distToMin = AngleDifference(angle, min);
+                float distToMax = AngleDifference(angle, max);
+                return distToMin < distToMax ? min : max;
             }
         }
-        else // limit.x�� �� ���� ��� (��: 30~180)
+        else
         {
-            angle = Mathf.Clamp(angle, limit.x, limit.y);
+            // 일반 범위 (예: 30~180)
+            if (angle >= min && angle <= max)
+            {
+                return angle;
+            }
+            else
+            {
+                // 범위 밖: 가장 가까운 경계로
+                float distToMin = AngleDifference(angle, min);
+                float distToMax = AngleDifference(angle, max);
+                return distToMin < distToMax ? min : max;
+            }
         }
+    }
 
+    // 두 각도 간의 최단 거리 계산
+    float AngleDifference(float from, float to)
+    {
+        float diff = Mathf.Abs(to - from);
+        if (diff > 180f)
+        {
+            diff = 360f - diff;
+        }
+        return diff;
+    }
+
+    // 각도를 0~360 범위로 정규화
+    float NormalizeAngle(float angle)
+    {
+        angle = angle % 360f;
+        if (angle < 0f)
+        {
+            angle += 360f;
+        }
         return angle;
     }
 
-    // �ͷ� ������ ȸ��
+    // ✅ 터렛 스무스하게 회전 (최단 거리로)
     void SmoothRotateTurrets()
     {
         if (PivotA != null) RotatePivot(PivotA, angleA);
@@ -201,11 +252,13 @@ public class Turret : MonoBehaviour
     void RotatePivot(GameObject pivot, float targetAngle)
     {
         float currentAngle = pivot.transform.eulerAngles.z;
+
+        // Mathf.LerpAngle은 자동으로 최단 경로로 회전
         float newAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * 5f);
         pivot.transform.rotation = Quaternion.Euler(0, 0, newAngle);
     }
 
-    // �ڵ� �߻�
+    // 자동 발사
     void AutoFire()
     {
         if (turretAssignment.ContainsKey("A") && Time.time >= nextFireTime[0])
@@ -233,27 +286,29 @@ public class Turret : MonoBehaviour
         }
     }
 
-    // �Ѿ� �߻�
+    // 총알 발사
     void FireBullet(GameObject pivot, float angle)
     {
         if (Bullet == null || pivot == null) return;
 
         GameObject bullet = Instantiate(Bullet, pivot.transform.position, Quaternion.Euler(0, 0, angle));
 
-        // �Ѿ˿� �ӵ� ����
+        // 총알에 속도 적용
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            float angleRad = angle * Mathf.Deg2Rad;
+            // Unity RotationZ를 방향 벡터로 변환
+            // RotationZ 0° = 위(12시) 이므로 +90도 보정 필요
+            float angleRad = (angle + 90f) * Mathf.Deg2Rad;
             Vector2 direction = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
-            rb.linearVelocity = direction * 10f; // �ӵ� 10
+            rb.linearVelocity = direction * 20f; // 속도 10
         }
 
-        // 5�� �� �ڵ� ����
+        // 5초 후 총알 제거
         Destroy(bullet, 5f);
     }
 
-    // �߻� Ȱ��ȭ/��Ȱ��ȭ
+    // 발사 활성화/비활성화
     public void EnableShooting(bool enable)
     {
         canShoot = enable;

@@ -143,10 +143,19 @@ public class Server : MonoBehaviour
             isConnected = true;
             Debug.Log("✅ 서버 연결 성공! (에디터)");
 
+            // ✅ Unity의 현재 Phase를 서버에 전송
+            string currentGamePhase = "ready";
+            if (GameManager.Instance != null)
+            {
+                currentGamePhase = GameManager.Instance.currentPhase;
+            }
+
             var unityClient = new JObject();
             unityClient["type"] = "unity";
+            unityClient["currentPhase"] = currentGamePhase; // ✅ 이 줄 추가!
+
             socket.Emit("registerUnity", unityClient);
-            Debug.Log("Unity 클라이언트 등록 완료");
+            Debug.Log($"Unity 클라이언트 등록 완료 (Phase: {currentGamePhase})");
         };
 
         socket.OnDisconnected += (sender, e) =>
@@ -327,7 +336,7 @@ public class Server : MonoBehaviour
 
                     if (GameManager.Instance != null)
                     {
-                        GameManager.Instance.currentPhase = phase;
+                        // GameManager.Instance.currentPhase = phase; // ✅ 제거: GameManager가 자체 관리
                     }
 
                     if (Interface.Instance != null)
@@ -381,14 +390,16 @@ public class Server : MonoBehaviour
         try
         {
             var parser = new SimpleJSONParser();
-            var data = parser.Parse(jsonData);
+            var data = parser.Parse(jsonData) as Dictionary<string, object>;
+
+            if (data == null) return;
 
             PlayerData player = new PlayerData
             {
-                id = (string)data["id"],
-                nickname = (string)data["nickname"],
-                color = (string)data["color"],
-                turret = (string)data["turret"]
+                id = data.ContainsKey("id") ? (string)data["id"] : "",
+                nickname = data.ContainsKey("nickname") ? (string)data["nickname"] : "Unknown",
+                color = data.ContainsKey("color") ? (string)data["color"] : "green",
+                turret = data.ContainsKey("turret") ? (string)data["turret"] : "A"
             };
 
             if (!players.ContainsKey(player.id))
@@ -408,7 +419,12 @@ public class Server : MonoBehaviour
         }
     }
 
-    public void OnPlayerList(string jsonData)
+    public void OnRoomFull(string message)
+    {
+        Debug.Log("방 만원: " + message);
+    }
+
+    public void OnPlayerListUpdated(string jsonData)
     {
         try
         {
@@ -443,7 +459,11 @@ public class Server : MonoBehaviour
             if (Interface.Instance != null)
             {
                 Interface.Instance.UpdatePlayerList();
-                Interface.Instance.ShowReadyPhase();
+                // ✅ Ready Phase일 때만 ShowReadyPhase 호출
+                if (GameManager.Instance != null && GameManager.Instance.currentPhase == "ready")
+                {
+                    Interface.Instance.ShowReadyPhase();
+                }
             }
         }
         catch (System.Exception ex)
@@ -452,15 +472,17 @@ public class Server : MonoBehaviour
         }
     }
 
-    public void OnTurretAngleUpdate(string jsonData)
+    public void OnTurretAngleUpdated(string jsonData)
     {
         try
         {
             var parser = new SimpleJSONParser();
-            var data = parser.Parse(jsonData);
+            var data = parser.Parse(jsonData) as Dictionary<string, object>;
 
-            string turret = (string)data["turret"];
-            float angle = System.Convert.ToSingle(data["angle"]);
+            if (data == null) return;
+
+            string turret = data.ContainsKey("turret") ? (string)data["turret"] : "";
+            float angle = data.ContainsKey("angle") ? System.Convert.ToSingle(data["angle"]) : 0f;
 
             if (Turret.Instance != null)
             {
@@ -478,13 +500,15 @@ public class Server : MonoBehaviour
         try
         {
             var parser = new SimpleJSONParser();
-            var data = parser.Parse(jsonData);
+            var data = parser.Parse(jsonData) as Dictionary<string, object>;
 
-            string turret = (string)data["turret"];
-            string upgradeType = (string)data["upgradeType"];
-            int level = System.Convert.ToInt32(data["level"]);
+            if (data == null) return;
 
-            int upgradeIndex = upgradeType[0] - 'A';
+            string turret = data.ContainsKey("turret") ? (string)data["turret"] : "";
+            string upgradeType = data.ContainsKey("upgradeType") ? (string)data["upgradeType"] : "";
+            int level = data.ContainsKey("level") ? System.Convert.ToInt32(data["level"]) : 0;
+
+            int upgradeIndex = upgradeType.Length > 0 ? upgradeType[0] - 'A' : -1;
             if (upgradeIndex >= 0 && upgradeIndex < 4)
             {
                 upgradeStates[turret][upgradeIndex] = level;
@@ -498,7 +522,7 @@ public class Server : MonoBehaviour
         }
     }
 
-    public void OnPhaseChange(string phase)
+    public void OnPhaseChanged(string phase)
     {
         try
         {
@@ -506,7 +530,7 @@ public class Server : MonoBehaviour
 
             if (GameManager.Instance != null)
             {
-                GameManager.Instance.currentPhase = phase;
+            // GameManager.Instance.currentPhase = phase; // ✅ 제거: GameManager가 자체 관리
             }
 
             if (Interface.Instance != null)

@@ -178,6 +178,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 423fb15422cce8d42a5e6245917dc400, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyUnit
-  moveSpeed: 2
-  zigzagAmplitude: 1
-  zigzagFrequency: 2
+  moveSpeed: 0.5
+  zigzagAmplitude: 3
+  zigzagFrequency: 3

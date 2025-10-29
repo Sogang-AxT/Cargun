@@ -76,25 +76,37 @@ public class GameManager : MonoBehaviour
         }
         else if (currentPhase == "combat")
         {
-            // Combat 타이머
+            // ✅ 매 프레임 로그 (임시)
+            Debug.Log($"[Combat Update] Phase: {currentPhase}, Timer: {currentTimer:F2}, deltaTime: {Time.deltaTime:F4}");
+
+            // Combat 타이머 - 항상 감소
+            float beforeTimer = currentTimer;
             currentTimer -= Time.deltaTime;
 
-            // 화물이 0이 되면 패배
-            if (remainingCargo <= 0)
-            {
-                EndCombatPhase(false); // 패배
-            }
+            Debug.Log($"[Combat Update] Timer 감소: {beforeTimer:F2} → {currentTimer:F2}");
 
-            // 시간이 다 지나면 승리
+            // 시간이 다 지나면 승리 (Cargo보다 먼저 체크)
             if (currentTimer <= 0)
             {
+                Debug.Log("⏰ 시간 종료! 승리!");
                 EndCombatPhase(true); // 승리
+                return; // ✅ 즉시 종료
+            }
+
+            // 화물이 0이 되면 패배 (DecreaseCargo에서도 처리하지만 안전장치)
+            if (remainingCargo <= 0)
+            {
+                Debug.Log("📦 Cargo 0개! 패배!");
+                EndCombatPhase(false); // 패배
+                return; // ✅ 즉시 종료
             }
 
             // 플레이어 0명이면 즉시 Ready로
             if (playerCount == 0)
             {
+                Debug.Log("👥 플레이어 0명! Ready로 복귀");
                 ForceReturnToReady();
+                return; // ✅ 즉시 종료
             }
         }
     }
@@ -108,9 +120,14 @@ public class GameManager : MonoBehaviour
     void StartCombatPhase()
     {
         Debug.Log("=== Combat Phase 시작 ===");
+        Debug.Log($"[StartCombat] currentPhase 변경 전: {currentPhase}");
+
         currentPhase = "combat";
-        currentTimer = combatTimer;
+        currentTimer = combatTimer; // 90초로 초기화
         remainingCargo = 4;
+        gameStarted = false; // ✅ Ready용 플래그 리셋
+
+        Debug.Log($"[StartCombat] currentPhase: {currentPhase}, currentTimer: {currentTimer}, combatTimer: {combatTimer}");
 
         // Base 이동 시작
         if (Base.Instance != null)
@@ -147,12 +164,21 @@ public class GameManager : MonoBehaviour
         {
             Server.Instance.BroadcastPhaseChange("combat");
         }
+
+        Debug.Log("=== Combat Phase 시작 완료 ===");
     }
 
     // Combat Phase 종료
     void EndCombatPhase(bool victory)
     {
+        // ✅ 중복 호출 방지
+        if (currentPhase != "combat") return;
+
         Debug.Log($"=== Combat Phase 종료 ({(victory ? "승리" : "패배")}) ===");
+
+        // ✅ 즉시 Phase 변경하여 Update에서 더 이상 처리하지 않도록
+        currentPhase = "ending"; // combat도 ready도 아닌 중간 상태
+        currentTimer = 0f; // 타이머 정지
 
         // Enemy 스폰 중지 및 제거
         if (Enemy.Instance != null)
@@ -270,11 +296,18 @@ public class GameManager : MonoBehaviour
     public void DecreaseCargo()
     {
         remainingCargo--;
-        Debug.Log($"Cargo 감소: {remainingCargo}/4");
+        Debug.Log($"💥 Cargo 감소: {remainingCargo}/4");
 
         if (Interface.Instance != null)
         {
             Interface.Instance.UpdateCargoCount(remainingCargo);
+        }
+
+        // ✅ 즉시 체크: Cargo가 0이면 패배
+        if (remainingCargo <= 0)
+        {
+            Debug.Log("🚨 Cargo 0개! 패배 처리 시작");
+            EndCombatPhase(false);
         }
     }
 }
