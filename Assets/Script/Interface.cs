@@ -1,5 +1,7 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Interface : MonoBehaviour
 {
@@ -13,7 +15,7 @@ public class Interface : MonoBehaviour
     public Text Timer_Ready;
     public Text PlayerNum_Ready;
     public Text Wave_Ready;
-    public Text[] PlayerName_Ready; // 4°³ (ÇÃ·¹ÀÌ¾î 1~4)
+    public Text[] PlayerName_Ready; // 4ê°œ (í”Œë ˆì´ì–´ 1~4)
 
     [Header("Combat Phase UI")]
     public GameObject CombatPhase;
@@ -35,13 +37,13 @@ public class Interface : MonoBehaviour
 
     void Start()
     {
-        // ÃÊ±â »óÅÂ: QR¸¸ Ç¥½Ã
+        // ì´ˆê¸° ìƒíƒœ: QRë§Œ í‘œì‹œ
         ShowQROnly();
     }
 
     void Update()
     {
-        // Å¸ÀÌ¸Ó ¾÷µ¥ÀÌÆ®
+        // íƒ€ì´ë¨¸ ì—…ë°ì´íŠ¸
         if (GameManager.Instance != null)
         {
             float timer = GameManager.Instance.GetCurrentTimer();
@@ -58,7 +60,7 @@ public class Interface : MonoBehaviour
             }
         }
 
-        // Wave ¾÷µ¥ÀÌÆ®
+        // Wave ì—…ë°ì´íŠ¸
         if (GameManager.Instance != null)
         {
             int wave = GameManager.Instance.currentWave;
@@ -75,11 +77,11 @@ public class Interface : MonoBehaviour
             }
         }
 
-        // ÇÃ·¹ÀÌ¾î ¼ö ¾÷µ¥ÀÌÆ®
+        // í”Œë ˆì´ì–´ ìˆ˜ ì—…ë°ì´íŠ¸
         UpdatePlayerCount();
     }
 
-    // QR ÄÚµå¸¸ Ç¥½Ã
+    // QR ì½”ë“œë§Œ í‘œì‹œ
     void ShowQROnly()
     {
         if (QRCode != null) QRCode.SetActive(true);
@@ -87,26 +89,26 @@ public class Interface : MonoBehaviour
         if (CombatPhase != null) CombatPhase.SetActive(false);
     }
 
-    // Ready Phase Ç¥½Ã
+    // Ready Phase í‘œì‹œ
     public void ShowReadyPhase()
     {
         int playerCount = Server.Instance != null ? Server.Instance.playerCount : 0;
 
         if (playerCount == 0)
         {
-            // ÇÃ·¹ÀÌ¾î 0¸í: QR¸¸
+            // í”Œë ˆì´ì–´ 0ëª…: QRë§Œ
             ShowQROnly();
         }
         else if (playerCount >= 1 && playerCount <= 3)
         {
-            // ÇÃ·¹ÀÌ¾î 1~3¸í: QR + Ready
+            // í”Œë ˆì´ì–´ 1~3ëª…: QR + Ready
             if (QRCode != null) QRCode.SetActive(true);
             if (ReadyPhase != null) ReadyPhase.SetActive(true);
             if (CombatPhase != null) CombatPhase.SetActive(false);
         }
         else if (playerCount >= 4)
         {
-            // ÇÃ·¹ÀÌ¾î 4¸í: QR ¼û±è, Ready¸¸
+            // í”Œë ˆì´ì–´ 4ëª…: QR ìˆ¨ê¹€, Readyë§Œ
             if (QRCode != null) QRCode.SetActive(false);
             if (ReadyPhase != null) ReadyPhase.SetActive(true);
             if (CombatPhase != null) CombatPhase.SetActive(false);
@@ -115,43 +117,49 @@ public class Interface : MonoBehaviour
         UpdatePlayerList();
     }
 
-    // Combat Phase Ç¥½Ã
+    // Combat Phase í‘œì‹œ
     public void ShowCombatPhase()
     {
         if (QRCode != null) QRCode.SetActive(false);
         if (ReadyPhase != null) ReadyPhase.SetActive(false);
         if (CombatPhase != null) CombatPhase.SetActive(true);
 
-        // Cargo ÃÊ±âÈ­
+        // Cargo ì´ˆê¸°í™”
         UpdateCargoCount(4);
     }
 
-    // ÇÃ·¹ÀÌ¾î ¸ñ·Ï ¾÷µ¥ÀÌÆ®
+    // âœ… í”Œë ˆì´ì–´ ëª©ë¡ ì—…ë°ì´íŠ¸ (ìŠ¬ë¡¯ ê¸°ë°˜)
     public void UpdatePlayerList()
     {
-        if (Server.Instance == null) return;
+        if (Server.Instance == null || PlayerName_Ready == null) return;
 
-        int count = 0;
+        // âœ… 4ê°œì˜ ê³ ì • ìŠ¬ë¡¯ì„ ë§Œë“¤ì–´ì„œ ê´€ë¦¬
+        string[] slotNames = new string[4] { "", "", "", "" };
+
+        // âœ… í”Œë ˆì´ì–´ë¥¼ ìŠ¬ë¡¯ ë²ˆí˜¸ì— ë§ì¶° ë°°ì¹˜
+        Debug.Log($"=== UpdatePlayerList: ì´ {Server.Instance.players.Count}ëª… ===");
         foreach (var player in Server.Instance.players.Values)
         {
-            if (count < PlayerName_Ready.Length && PlayerName_Ready[count] != null)
+            Debug.Log($"Player: {player.nickname}, Slot: {player.slot}, Color: {player.color}");
+
+            if (player.slot >= 1 && player.slot <= 4)
             {
-                PlayerName_Ready[count].text = player.nickname;
+                slotNames[player.slot - 1] = player.nickname;
             }
-            count++;
         }
 
-        // ³ª¸ÓÁö Ä­Àº ºñ¿ò
-        for (int i = count; i < PlayerName_Ready.Length; i++)
+        // âœ… UIì— í‘œì‹œ (ë¹ˆ ìŠ¬ë¡¯ì€ ê³µë€)
+        for (int i = 0; i < PlayerName_Ready.Length && i < 4; i++)
         {
             if (PlayerName_Ready[i] != null)
             {
-                PlayerName_Ready[i].text = "";
+                PlayerName_Ready[i].text = slotNames[i];
+                Debug.Log($"Slot {i + 1}: {slotNames[i]}");
             }
         }
     }
 
-    // ÇÃ·¹ÀÌ¾î ¼ö ¾÷µ¥ÀÌÆ®
+    // í”Œë ˆì´ì–´ ìˆ˜ ì—…ë°ì´íŠ¸
     void UpdatePlayerCount()
     {
         if (PlayerNum_Ready != null && Server.Instance != null)
@@ -161,7 +169,7 @@ public class Interface : MonoBehaviour
         }
     }
 
-    // Cargo ¼ö·® ¾÷µ¥ÀÌÆ®
+    // Cargo ìˆ˜ëŸ‰ ì—…ë°ì´íŠ¸
     public void UpdateCargoCount(int count)
     {
         if (CargoNum_Combat != null)

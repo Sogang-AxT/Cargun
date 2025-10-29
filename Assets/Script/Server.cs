@@ -16,6 +16,7 @@ public class PlayerData
     public string nickname;
     public string color;
     public string turret;
+    public int slot; // 플레이어 슬롯 번호 (1~4)
 }
 
 // 터렛 각도 업데이트 데이터
@@ -213,7 +214,11 @@ public class Server : MonoBehaviour
                         if (Interface.Instance != null)
                         {
                             Interface.Instance.UpdatePlayerList();
-                            Interface.Instance.ShowReadyPhase();
+                            // ✅ Ready Phase일 때만 ShowReadyPhase 호출
+                            if (GameManager.Instance != null && GameManager.Instance.currentPhase == "ready")
+                            {
+                                Interface.Instance.ShowReadyPhase();
+                            }
                         }
                         return;
                     }
@@ -230,7 +235,8 @@ public class Server : MonoBehaviour
                                 id = playerObj["id"]?.ToString() ?? "",
                                 nickname = playerObj["nickname"]?.ToString() ?? "Unknown",
                                 color = playerObj["color"]?.ToString() ?? "green",
-                                turret = playerObj["turret"]?.ToString() ?? "A"
+                                turret = playerObj["turret"]?.ToString() ?? "A",
+                                slot = int.Parse(playerObj["slot"]?.ToString() ?? "1")
                             };
 
                             players[player.id] = player;
@@ -241,7 +247,11 @@ public class Server : MonoBehaviour
                     if (Interface.Instance != null)
                     {
                         Interface.Instance.UpdatePlayerList();
-                        Interface.Instance.ShowReadyPhase();
+                        // ✅ Ready Phase일 때만 ShowReadyPhase 호출
+                        if (GameManager.Instance != null && GameManager.Instance.currentPhase == "ready")
+                        {
+                            Interface.Instance.ShowReadyPhase();
+                        }
                     }
                 }
                 catch (System.Exception ex)
@@ -251,15 +261,22 @@ public class Server : MonoBehaviour
             });
         });
 
+        // ✅ updateTurret 이벤트 수정 - JSON 파싱 방식 변경
         socket.On("updateTurret", (response) =>
         {
             RunOnMainThread(() =>
             {
                 try
                 {
-                    var data = response.GetValue<JObject>();
-                    string turret = data["turret"].ToString();
-                    float angle = float.Parse(data["angle"].ToString());
+                    string rawJson = response.ToString();
+                    if (rawJson.StartsWith("[") && rawJson.EndsWith("]"))
+                    {
+                        rawJson = rawJson.Substring(1, rawJson.Length - 2);
+                    }
+
+                    var data = JObject.Parse(rawJson);
+                    string turret = data["turret"]?.ToString() ?? "";
+                    float angle = float.Parse(data["angle"]?.ToString() ?? "0");
 
                     if (Turret.Instance != null)
                     {
@@ -285,12 +302,12 @@ public class Server : MonoBehaviour
                     int level = int.Parse(data["level"].ToString());
 
                     int upgradeIndex = upgradeType[0] - 'A';
-                    if (upgradeStates.ContainsKey(turret))
+                    if (upgradeIndex >= 0 && upgradeIndex < 4)
                     {
                         upgradeStates[turret][upgradeIndex] = level;
                     }
 
-                    Debug.Log($"Turret {turret} - Upgrade {upgradeType} Lv.{level}");
+                    Debug.Log($"업그레이드 적용: Turret {turret} - {upgradeType} Lv.{level}");
                 }
                 catch (System.Exception ex)
                 {
@@ -301,25 +318,38 @@ public class Server : MonoBehaviour
 
         socket.On("phaseChange", (response) =>
         {
-            string phase = response.GetValue<string>();
             RunOnMainThread(() =>
             {
-                if (Interface.Instance != null)
+                try
                 {
-                    if (phase == "ready")
+                    string phase = response.ToString().Trim('"');
+                    Debug.Log($"Phase 변경 수신: {phase}");
+
+                    if (GameManager.Instance != null)
                     {
-                        Interface.Instance.ShowReadyPhase();
+                        GameManager.Instance.currentPhase = phase;
                     }
-                    else if (phase == "combat")
+
+                    if (Interface.Instance != null)
                     {
-                        Interface.Instance.ShowCombatPhase();
+                        if (phase == "ready")
+                        {
+                            Interface.Instance.ShowReadyPhase();
+                        }
+                        else if (phase == "combat")
+                        {
+                            Interface.Instance.ShowCombatPhase();
+                        }
                     }
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError("Phase 변경 오류: " + ex.Message);
                 }
             });
         });
 
         socket.Connect();
-        Debug.Log("서버 연결 시도 중: " + serverURL);
     }
 
     void RunOnMainThread(Action action)
@@ -331,29 +361,35 @@ public class Server : MonoBehaviour
     }
 #endif
 
-    // ========== WebGL Callback 함수들 (JavaScript → Unity) ==========
-
-    // 연결 성공
-    public void OnSocketConnected(string empty)
+#if UNITY_WEBGL && !UNITY_EDITOR
+    // WebGL 빌드용 함수들
+    public void OnSocketConnected()
     {
         isConnected = true;
         Debug.Log("✅ 서버 연결 성공! (WebGL)");
-        // registerUnity는 jslib에서 자동으로 전송됨
+        RegisterUnityClient();
     }
 
-    // 연결 끊김
-    public void OnSocketDisconnected(string empty)
+    public void OnSocketDisconnected()
     {
         isConnected = false;
         Debug.Log("❌ 서버 연결 끊김 (WebGL)");
     }
 
-    // 플레이어 입장
-    public void OnPlayerJoined(string json)
+    public void OnPlayerJoined(string jsonData)
     {
         try
         {
-            PlayerData player = JsonUtility.FromJson<PlayerData>(json);
+            var parser = new SimpleJSONParser();
+            var data = parser.Parse(jsonData);
+
+            PlayerData player = new PlayerData
+            {
+                id = (string)data["id"],
+                nickname = (string)data["nickname"],
+                color = (string)data["color"],
+                turret = (string)data["turret"]
+            };
 
             if (!players.ContainsKey(player.id))
             {
@@ -365,8 +401,6 @@ public class Server : MonoBehaviour
             {
                 Interface.Instance.UpdatePlayerList();
             }
-
-            Debug.Log($"플레이어 입장: {player.nickname}");
         }
         catch (System.Exception ex)
         {
@@ -374,46 +408,30 @@ public class Server : MonoBehaviour
         }
     }
 
-    // 방 꽉참
-    public void OnRoomFull(string message)
-    {
-        Debug.Log("방 만원: " + message);
-    }
-
-    // 플레이어 목록 업데이트
-    public void OnPlayerListUpdated(string json)
+    public void OnPlayerList(string jsonData)
     {
         try
         {
+            var parser = new SimpleJSONParser();
+            var data = parser.Parse(jsonData);
+
             players.Clear();
             playerCount = 0;
 
-            if (string.IsNullOrEmpty(json) || json == "{}")
+            if (data is Dictionary<string, object> playerDict)
             {
-                if (Interface.Instance != null)
+                foreach (var kvp in playerDict)
                 {
-                    Interface.Instance.UpdatePlayerList();
-                    Interface.Instance.ShowReadyPhase();
-                }
-                return;
-            }
-
-            // JSON 파싱 (WebGL에서는 간단한 파싱)
-            var dict = MiniJSON.Json.Deserialize(json) as Dictionary<string, object>;
-
-            if (dict != null)
-            {
-                foreach (var kvp in dict)
-                {
-                    var playerDict = kvp.Value as Dictionary<string, object>;
-                    if (playerDict != null)
+                    var playerData = kvp.Value as Dictionary<string, object>;
+                    if (playerData != null)
                     {
                         PlayerData player = new PlayerData
                         {
-                            id = playerDict.ContainsKey("id") ? playerDict["id"].ToString() : "",
-                            nickname = playerDict.ContainsKey("nickname") ? playerDict["nickname"].ToString() : "Unknown",
-                            color = playerDict.ContainsKey("color") ? playerDict["color"].ToString() : "green",
-                            turret = playerDict.ContainsKey("turret") ? playerDict["turret"].ToString() : "A"
+                            id = playerData.ContainsKey("id") ? (string)playerData["id"] : "",
+                            nickname = playerData.ContainsKey("nickname") ? (string)playerData["nickname"] : "Unknown",
+                            color = playerData.ContainsKey("color") ? (string)playerData["color"] : "green",
+                            turret = playerData.ContainsKey("turret") ? (string)playerData["turret"] : "A",
+                            slot = playerData.ContainsKey("slot") ? System.Convert.ToInt32(playerData["slot"]) : 1
                         };
 
                         players[player.id] = player;
@@ -427,25 +445,26 @@ public class Server : MonoBehaviour
                 Interface.Instance.UpdatePlayerList();
                 Interface.Instance.ShowReadyPhase();
             }
-
-            Debug.Log($"플레이어 목록 업데이트: {playerCount}명");
         }
         catch (System.Exception ex)
         {
-            Debug.LogError("플레이어 목록 파싱 오류: " + ex.Message);
+            Debug.LogError($"플레이어 목록 파싱 오류: {ex.Message}");
         }
     }
 
-    // 터렛 각도 업데이트
-    public void OnTurretAngleUpdated(string json)
+    public void OnTurretAngleUpdate(string jsonData)
     {
         try
         {
-            TurretAngleData data = JsonUtility.FromJson<TurretAngleData>(json);
+            var parser = new SimpleJSONParser();
+            var data = parser.Parse(jsonData);
+
+            string turret = (string)data["turret"];
+            float angle = System.Convert.ToSingle(data["angle"]);
 
             if (Turret.Instance != null)
             {
-                Turret.Instance.UpdateTurretAngle(data.turret, data.angle);
+                Turret.Instance.UpdateTurretAngle(turret, angle);
             }
         }
         catch (System.Exception ex)
@@ -454,26 +473,24 @@ public class Server : MonoBehaviour
         }
     }
 
-    // 터렛 전환
-    public void OnTurretSwitched(string turret)
-    {
-        Debug.Log("터렛 전환: " + turret);
-    }
-
-    // 업그레이드 적용
-    public void OnUpgradeApplied(string json)
+    public void OnUpgradeApplied(string jsonData)
     {
         try
         {
-            UpgradeData data = JsonUtility.FromJson<UpgradeData>(json);
+            var parser = new SimpleJSONParser();
+            var data = parser.Parse(jsonData);
 
-            int upgradeIndex = data.upgradeType[0] - 'A';
-            if (upgradeStates.ContainsKey(data.turret))
+            string turret = (string)data["turret"];
+            string upgradeType = (string)data["upgradeType"];
+            int level = System.Convert.ToInt32(data["level"]);
+
+            int upgradeIndex = upgradeType[0] - 'A';
+            if (upgradeIndex >= 0 && upgradeIndex < 4)
             {
-                upgradeStates[data.turret][upgradeIndex] = data.level;
+                upgradeStates[turret][upgradeIndex] = level;
             }
 
-            Debug.Log($"Turret {data.turret} - Upgrade {data.upgradeType} Lv.{data.level}");
+            Debug.Log($"업그레이드 적용: Turret {turret} - {upgradeType} Lv.{level}");
         }
         catch (System.Exception ex)
         {
@@ -481,76 +498,60 @@ public class Server : MonoBehaviour
         }
     }
 
-    // Phase 변경
-    public void OnPhaseChanged(string phase)
+    public void OnPhaseChange(string phase)
     {
-        Debug.Log("Phase 변경: " + phase);
-
-        if (Interface.Instance != null)
+        try
         {
-            if (phase == "ready")
+            Debug.Log($"Phase 변경 수신: {phase}");
+
+            if (GameManager.Instance != null)
             {
-                Interface.Instance.ShowReadyPhase();
+                GameManager.Instance.currentPhase = phase;
             }
-            else if (phase == "combat")
+
+            if (Interface.Instance != null)
             {
-                Interface.Instance.ShowCombatPhase();
+                if (phase == "ready")
+                {
+                    Interface.Instance.ShowReadyPhase();
+                }
+                else if (phase == "combat")
+                {
+                    Interface.Instance.ShowCombatPhase();
+                }
             }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("Phase 변경 오류: " + ex.Message);
         }
     }
+#endif
 
-    // ========== 서버로 데이터 전송 (공통) ==========
-
-    public void SendToServer(string eventName, string jsonData = "")
+    // 서버로 메시지 전송
+    public void SendToServer(string eventName, string jsonData)
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        // WebGL: JavaScript 브리지 사용
-        if (IsSocketConnected())
-        {
-            EmitToServer(eventName, jsonData);
-        }
-        else
-        {
-            Debug.LogWarning("서버 미연결 상태 (WebGL)");
-        }
+        EmitToServer(eventName, jsonData);
 #else
-        // 에디터: SocketIOClient 사용
         if (socket != null && isConnected)
         {
-            if (string.IsNullOrEmpty(jsonData))
-            {
-                socket.Emit(eventName);
-            }
-            else
-            {
-                try
-                {
-                    var data = JObject.Parse(jsonData);
-                    socket.Emit(eventName, data);
-                    Debug.Log($"📤 전송: {eventName} - {jsonData}");
-                }
-                catch (System.Exception ex)
-                {
-                    Debug.LogError("전송 오류: " + ex.Message);
-                }
-            }
-        }
-        else
-        {
-            Debug.LogWarning("서버 미연결 상태 (에디터)");
+            socket.Emit(eventName, jsonData);
         }
 #endif
     }
 
+    // Phase 변경 브로드캐스트
     public void BroadcastPhaseChange(string phase)
     {
-        string jsonData = $"{{\"phase\":\"{phase}\"}}";
-        SendToServer("phaseChange", jsonData);
-    }
-
-    public void BroadcastPlayerList()
-    {
-        SendToServer("playerList", "{}");
+#if UNITY_WEBGL && !UNITY_EDITOR
+        EmitToServer("phaseChange", $"\"{phase}\"");
+#else
+        if (socket != null && isConnected)
+        {
+            socket.Emit("phaseChange", phase);
+        }
+#endif
     }
 
     void OnApplicationQuit()
@@ -565,37 +566,10 @@ public class Server : MonoBehaviour
 #endif
     }
 
-    void OnDestroy()
+    // 간단한 JSON 파서 (WebGL용)
+    class SimpleJSONParser
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        DisconnectSocket();
-#else
-        if (socket != null)
-        {
-            socket.Disconnect();
-        }
-#endif
-    }
-}
-
-// ========== MiniJSON (WebGL용 간단한 JSON 파서) ==========
-namespace MiniJSON
-{
-    public static class Json
-    {
-        public static object Deserialize(string json)
-        {
-            if (string.IsNullOrEmpty(json))
-                return null;
-
-            return Parser.Parse(json);
-        }
-    }
-
-    sealed class Parser : System.IDisposable
-    {
-        const string WHITE_SPACE = " \t\n\r";
-        const string WORD_BREAK = " \t\n\r{}[],:\"";
+        private StringReader json;
 
         enum TOKEN
         {
@@ -613,28 +587,13 @@ namespace MiniJSON
             NULL
         }
 
-        StringReader json;
+        const string WHITE_SPACE = " \t\n\r";
+        const string WORD_BREAK = " \t\n\r{}[],:\"";
 
-        Parser(string jsonString)
+        public object Parse(string jsonString)
         {
             json = new StringReader(jsonString);
-        }
-
-        public static object Parse(string jsonString)
-        {
-            using (var instance = new Parser(jsonString))
-            {
-                return instance.ParseValue();
-            }
-        }
-
-        public void Dispose()
-        {
-            if (json != null)
-            {
-                json.Dispose();
-                json = null;
-            }
+            return ParseValue();
         }
 
         Dictionary<string, object> ParseObject()
