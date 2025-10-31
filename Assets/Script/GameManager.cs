@@ -130,9 +130,9 @@ public class GameManager : MonoBehaviour
         Debug.Log($"[StartCombat] currentPhase: {currentPhase}, currentTimer: {currentTimer}, combatTimer: {combatTimer}");
 
         // Base 이동 시작
-        if (Base.Instance != null)
+        if (ShipStationMovementController.Instance != null)
         {
-            Base.Instance.MoveOut();
+            ShipStationMovementController.Instance.MoveOut();
         }
 
         // Cargo 활성화
@@ -205,9 +205,9 @@ public class GameManager : MonoBehaviour
         }
 
         // Base 복귀 시작
-        if (Base.Instance != null)
+        if (ShipStationMovementController.Instance != null)
         {
-            StartCoroutine(Base.Instance.MoveIn());
+            StartCoroutine(ShipStationMovementController.Instance.MoveIn());
         }
 
         // 5초 후 Ready Phase로
@@ -233,9 +233,9 @@ public class GameManager : MonoBehaviour
         }
 
         // Base 즉시 원위치
-        if (Base.Instance != null)
+        if (ShipStationMovementController.Instance != null)
         {
-            Base.Instance.ResetPosition();
+            ShipStationMovementController.Instance.ResetPosition();
         }
 
         // Ready Phase로

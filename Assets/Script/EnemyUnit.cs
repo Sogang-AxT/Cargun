@@ -1,85 +1,74 @@
 using UnityEngine;
 
-public class EnemyUnit : MonoBehaviour
-{
+public class EnemyUnit : MonoBehaviour {
     [Header("Movement")]
     public float moveSpeed = 2f;
-    public float zigzagAmplitude = 1f; // Áö±×Àç±× Æø
-    public float zigzagFrequency = 2f; // Áö±×Àç±× ºóµµ
+    public float zigzagAmplitude = 1f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+    public float zigzagFrequency = 2f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 
-    private int direction = 1; // 1 = ¿À¸¥ÂÊÀ¸·Î, -1 = ¿ÞÂÊÀ¸·Î
+    private int direction = 1; // 1 = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, -1 = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private Vector3 startPosition;
     private float timeOffset;
     private GameObject cargoTarget;
 
-    void Start()
-    {
+    void Start() {
         startPosition = transform.position;
-        timeOffset = Random.Range(0f, 100f); // Áö±×Àç±× ½ÃÀÛÁ¡ ·£´ý
+        timeOffset = Random.Range(0f, 100f); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        // Cargo Å¸°Ù Ã£±â
-        if (Cargo.Instance != null)
-        {
+        // Cargo Å¸ï¿½ï¿½ Ã£ï¿½ï¿½
+        if (Cargo.Instance != null) {
             cargoTarget = Cargo.Instance.CargoHitBox;
         }
     }
 
-    void Update()
-    {
+    void Update() {
         MoveToCargo();
     }
 
-    // Cargo¸¦ ÇâÇØ Áö±×Àç±×·Î ÀÌµ¿
-    void MoveToCargo()
-    {
+    // Cargoï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×·ï¿½ ï¿½Ìµï¿½
+    void MoveToCargo() {
         if (cargoTarget == null) return;
 
-        // Cargo ¹æÇâ
+        // Cargo ï¿½ï¿½ï¿½ï¿½
         Vector3 targetDirection = (cargoTarget.transform.position - transform.position).normalized;
 
-        // Áö±×Àç±× È¿°ú (Sin ÆÄµ¿)
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ (Sin ï¿½Äµï¿½)
         float zigzag = Mathf.Sin((Time.time + timeOffset) * zigzagFrequency) * zigzagAmplitude;
 
-        // ¼öÁ÷ ¹æÇâÀ¸·Î Áö±×Àç±×
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Vector3 perpendicular = new Vector3(-targetDirection.y, targetDirection.x, 0);
         Vector3 zigzagOffset = perpendicular * zigzag;
 
-        // ÃÖÁ¾ ÀÌµ¿
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
         Vector3 moveDirection = targetDirection + zigzagOffset.normalized * 0.3f;
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
 
-        // È­¸é ¹ÛÀ¸·Î ³ª°¡¸é Á¦°Å
-        if (Mathf.Abs(transform.position.x) > 15f || Mathf.Abs(transform.position.y) > 10f)
-        {
+        // È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        if (Mathf.Abs(transform.position.x) > 15f || Mathf.Abs(transform.position.y) > 10f) {
             DestroyEnemy();
         }
     }
 
-    // ¹æÇâ ¼³Á¤
-    public void SetDirection(int dir)
-    {
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public void SetDirection(int dir) {
         direction = dir;
     }
 
-    // Bullet°ú Ãæµ¹
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Bullet"))
-        {
-            // Bulletµµ Á¦°Å
+    // Bulletï¿½ï¿½ ï¿½æµ¹
+    void OnTriggerEnter2D(Collider2D other) {
+        if (other.CompareTag("Bullet")) {
+            // Bulletï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             Destroy(other.gameObject);
 
-            // Enemy Á¦°Å
+            // Enemy ï¿½ï¿½ï¿½ï¿½
             DestroyEnemy();
         }
     }
 
-    // Enemy Á¦°Å
-    void DestroyEnemy()
-    {
-        // Enemy ¸®½ºÆ®¿¡¼­ Á¦°Å
-        if (Enemy.Instance != null)
-        {
+    // Enemy ï¿½ï¿½ï¿½ï¿½
+    void DestroyEnemy() {
+        // Enemy ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        if (Enemy.Instance != null) {
             Enemy.Instance.RemoveEnemy(gameObject);
         }
 
