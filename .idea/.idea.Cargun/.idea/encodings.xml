@@ -2,7 +2,10 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Assets/Script/CargoHitBox.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/Script/CargoHitController.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/Script/Enemy.cs" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Assets/Script/EnemyUnit.cs" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Assets/Script/ShipStationMovementController.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/Script/ShipStationManager.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/Script/UpgradeInfo.cs" charset="UTF-8" />
   </component>
 </project>

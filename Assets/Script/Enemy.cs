@@ -10,8 +10,8 @@ public class Enemy : MonoBehaviour
     public GameObject EnemyObject;
 
     [Header("Spawn Settings")]
-    public float spawnInterval = 2f; // 2ÃÊ¸¶´Ù ½ºÆù
-    public int maxEnemies = 10; // ÃÖ´ë 10¸¶¸®
+    public float spawnInterval = 2f; // 2ï¿½Ê¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public int maxEnemies = 10; // ï¿½Ö´ï¿½ 10ï¿½ï¿½ï¿½ï¿½
 
     [Header("Spawn Range")]
     public Vector2 leftSpawnRange = new Vector2(-10f, -5f); // x = -10, y = -5~5
@@ -34,21 +34,21 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // ½ºÆù ½ÃÀÛ
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public void StartSpawning()
     {
         isSpawning = true;
         StartCoroutine(SpawnRoutine());
     }
 
-    // ½ºÆù ÁßÁö
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public void StopSpawning()
     {
         isSpawning = false;
         StopAllCoroutines();
     }
 
-    // ¸ðµç Àû Á¦°Å
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public void ClearAllEnemies()
     {
         foreach (GameObject enemy in activeEnemies)
@@ -61,7 +61,7 @@ public class Enemy : MonoBehaviour
         activeEnemies.Clear();
     }
 
-    // ½ºÆù ·çÆ¾
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¾
     IEnumerator SpawnRoutine()
     {
         while (isSpawning)
@@ -75,12 +75,12 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // Àû ½ºÆù
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     void SpawnEnemy()
     {
         if (EnemyObject == null) return;
 
-        // ÁÂ¿ì ·£´ý
+        // ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½
         bool spawnLeft = Random.value > 0.5f;
         float spawnX = spawnLeft ? leftSpawnRange.x : rightSpawnRange.x;
         float spawnY = Random.Range(spawnYMin, spawnYMax);
@@ -90,15 +90,15 @@ public class Enemy : MonoBehaviour
         GameObject enemy = Instantiate(EnemyObject, spawnPosition, Quaternion.identity);
         activeEnemies.Add(enemy);
 
-        // EnemyUnit ½ºÅ©¸³Æ®¿¡ ¹æÇâ Àü´Þ
+        // EnemyUnit ï¿½ï¿½Å©ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         EnemyUnit enemyUnit = enemy.GetComponent<EnemyUnit>();
         if (enemyUnit != null)
         {
-            enemyUnit.SetDirection(spawnLeft ? 1 : -1); // 1 = ¿À¸¥ÂÊ, -1 = ¿ÞÂÊ
+            enemyUnit.SetDirection(spawnLeft ? 1 : -1); // 1 = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, -1 = ï¿½ï¿½ï¿½ï¿½
         }
     }
 
-    // ÀûÀÌ Á×¾úÀ» ¶§ ¸®½ºÆ®¿¡¼­ Á¦°Å
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½×¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public void RemoveEnemy(GameObject enemy)
     {
         if (activeEnemies.Contains(enemy))

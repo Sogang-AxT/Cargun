@@ -4,12 +4,12 @@ using UnityEngine.UI;
 public class UpgradeInfo : MonoBehaviour
 {
     [Header("UI Elements")]
-    public GameObject InfoPanel; // ¾÷±×·¹ÀÌµå Á¤º¸ ÆÐ³Î
-    public Text InfoText; // Á¤º¸ Ç¥½Ã ÅØ½ºÆ®
+    public GameObject InfoPanel; // ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½
+    public Text InfoText; // ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ ï¿½Ø½ï¿½Æ®
 
     void Start()
     {
-        // ÃÊ±â »óÅÂ: ÆÐ³Î ¼û±è
+        // ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½Ð³ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (InfoPanel != null)
         {
             InfoPanel.SetActive(false);
@@ -18,20 +18,20 @@ public class UpgradeInfo : MonoBehaviour
 
     void Update()
     {
-        // IÅ°: ¾÷±×·¹ÀÌµå Á¤º¸ Åä±Û
+        // IÅ°: ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         if (Input.GetKeyDown(KeyCode.I))
         {
             ToggleInfo();
         }
 
-        // ESCÅ°: Á¤º¸ ´Ý±â
+        // ESCÅ°: ï¿½ï¿½ï¿½ï¿½ ï¿½Ý±ï¿½
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             HideInfo();
         }
     }
 
-    // Á¤º¸ Åä±Û
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     void ToggleInfo()
     {
         if (InfoPanel != null)
@@ -41,13 +41,13 @@ public class UpgradeInfo : MonoBehaviour
 
             if (!isActive)
             {
-                // Á¤º¸ ¾÷µ¥ÀÌÆ®
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
                 UpdateInfo();
             }
         }
     }
 
-    // Á¤º¸ ¼û±è
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     void HideInfo()
     {
         if (InfoPanel != null)
@@ -56,14 +56,14 @@ public class UpgradeInfo : MonoBehaviour
         }
     }
 
-    // ¾÷±×·¹ÀÌµå Á¤º¸ ¾÷µ¥ÀÌÆ®
+    // ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
     void UpdateInfo()
     {
         if (InfoText == null || Server.Instance == null) return;
 
-        string info = "=== ¾÷±×·¹ÀÌµå Á¤º¸ ===\n\n";
+        string info = "=== ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ===\n\n";
 
-        // °¢ ÅÍ·¿º° ¾÷±×·¹ÀÌµå »óÅÂ Ç¥½Ã
+        // ï¿½ï¿½ ï¿½Í·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
         info += GetTurretInfo("A");
         info += GetTurretInfo("B");
         info += GetTurretInfo("C");
@@ -72,7 +72,7 @@ public class UpgradeInfo : MonoBehaviour
         InfoText.text = info;
     }
 
-    // Æ¯Á¤ ÅÍ·¿ÀÇ ¾÷±×·¹ÀÌµå Á¤º¸
+    // Æ¯ï¿½ï¿½ ï¿½Í·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½
     string GetTurretInfo(string turret)
     {
         if (Server.Instance.upgradeStates.ContainsKey(turret))

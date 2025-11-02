@@ -1,8 +1,11 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 
-public class ShipStationMovementController : MonoBehaviour {
-    [Header("Movement Duration Settings")]
+public class ShipStationManager : MonoBehaviour {
+    public static UnityEvent OnStationMoveIn;
+    public static UnityEvent OnStationMoveOut;
+    
     [SerializeField] private float moveOutDuration;   // 5f
     [SerializeField] private float moveInDuration;    // 5f
 
@@ -18,6 +21,9 @@ public class ShipStationMovementController : MonoBehaviour {
         this._startPosition = new Vector3(0, 0, 0);
         this._inPosition = new Vector3(0, 30, 0);
         this._outPosition = new Vector3(0, -30, 0);
+        
+        OnStationMoveIn.AddListener(MoveIn);
+        OnStationMoveOut.AddListener(MoveOut);
     }
     
     private void Awake() {
