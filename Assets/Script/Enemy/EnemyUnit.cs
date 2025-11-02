@@ -16,8 +16,8 @@ public class EnemyUnit : MonoBehaviour {
         timeOffset = Random.Range(0f, 100f); // ������� ������ ����
 
         // Cargo Ÿ�� ã��
-        if (CargoHitController.Instance != null) {
-            cargoTarget = CargoHitController.Instance.CargoHitBox;
+        if (CargunShipHitController.Instance != null) {
+            cargoTarget = CargunShipHitController.Instance.CargoHitBox;
         }
     }
 

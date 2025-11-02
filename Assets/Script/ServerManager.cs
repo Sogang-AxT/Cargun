@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Runtime.InteropServices;
+using UnityEngine.Events;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
 using SocketIOClient;
@@ -37,10 +38,10 @@ public class UpgradeData
     public int level;
 }
 
-public class Server : MonoBehaviour
-{
-    public static Server Instance;
-
+public class ServerManager : MonoBehaviour {
+    public static UnityEvent<GC_EnumManager.GAMEPHASE> OnBroadcastPhaseChange;
+    
+    
     [Header("Server Settings")]
     public string serverURL = "https://mgtul.duckdns.org";
 
@@ -78,19 +79,7 @@ public class Server : MonoBehaviour
     private static extern void DisconnectSocket();
 #endif
 
-    void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
+    void Awake() {
         // 업그레이드 초기화
         upgradeStates["A"] = new int[4] { 0, 0, 0, 0 };
         upgradeStates["B"] = new int[4] { 0, 0, 0, 0 };

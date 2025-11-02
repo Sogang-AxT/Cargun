@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class GamePhaseStateController {
+public class GamePhaseStateManager {
     public IGamePhaseState CurrentGamePhaseState { get; private set; }
     public GamePhaseStateReady GamePhaseStateReady { get; }
     public GamePhaseStateCombat GamePhaseStateCombat { get; }
@@ -11,10 +11,10 @@ public class GamePhaseStateController {
     public int ReadyTimer { get; private set; }   // 30f
     public int CombatTimer { get; private set; }  // 90f
 
-    public GamePhaseStateController(GamePhaseStateController controller) {
-        this.GamePhaseStateReady = new (controller);
-        this.GamePhaseStateCombat = new (controller);
-        this.GamePhaseStateEnding = new (controller);
+    public GamePhaseStateManager(GamePhaseStateManager manager) {
+        this.GamePhaseStateReady = new (manager);
+        this.GamePhaseStateCombat = new (manager);
+        this.GamePhaseStateEnding = new (manager);
         
         this.CurrentGamePhaseState = this.GamePhaseStateReady;
         this.ReadyTimer = 30;

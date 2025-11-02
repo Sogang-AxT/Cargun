@@ -59,7 +59,7 @@ public class UpgradeInfo : MonoBehaviour
     // ���׷��̵� ���� ������Ʈ
     void UpdateInfo()
     {
-        if (InfoText == null || Server.Instance == null) return;
+        if (InfoText == null || ServerManager.Instance == null) return;
 
         string info = "=== ���׷��̵� ���� ===\n\n";
 
@@ -75,9 +75,9 @@ public class UpgradeInfo : MonoBehaviour
     // Ư�� �ͷ��� ���׷��̵� ����
     string GetTurretInfo(string turret)
     {
-        if (Server.Instance.upgradeStates.ContainsKey(turret))
+        if (ServerManager.Instance.upgradeStates.ContainsKey(turret))
         {
-            int[] upgrades = Server.Instance.upgradeStates[turret];
+            int[] upgrades = ServerManager.Instance.upgradeStates[turret];
 
             string info = $"Turret {turret}: ";
             info += $"{upgrades[0]}, {upgrades[1]}, {upgrades[2]}, {upgrades[3]}\n";

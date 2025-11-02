@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class GameManager : GC_SingletonImplementer<GameManager> {
-    private GamePhaseStateController _gamePhaseStateController;
+    private GamePhaseStateManager _gamePhaseStateManager;
     
     [SerializeField] private ShipStationManager _shipStationManager;
     
@@ -18,7 +18,7 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
 
 
     private void Init() {
-        this._gamePhaseStateController = new GamePhaseStateController(this._gamePhaseStateController);
+        this._gamePhaseStateManager = new GamePhaseStateManager(this._gamePhaseStateManager);
         
         this._nextGameState = null;
         this.CurrentplayerCount = 0;
@@ -71,7 +71,7 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
     }
 
     private bool CurrentPlayerCountCheck() {
-        var count = (Server.Instance != null) ? Server.Instance.playerCount : 0;
+        var count = (ServerManager.Instance != null) ? ServerManager.Instance.playerCount : 0;
         return (count >= this.minPlayersToStart);
     }
 
@@ -80,56 +80,22 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
             this._isPhaseRunning = true;
             this.CurrentWave += 1;    
             
-            this._nextGameState = (this._gamePhaseStateController.CurrentGamePhase == GC_EnumManager.GAMEPHASE.READY) ? 
-                this._gamePhaseStateController.GamePhaseStateReady : this._gamePhaseStateController.GamePhaseStateCombat;
+            this._nextGameState = (this._gamePhaseStateManager.CurrentGamePhase == GC_EnumManager.GAMEPHASE.READY) ? 
+                this._gamePhaseStateManager.GamePhaseStateReady : this._gamePhaseStateManager.GamePhaseStateCombat;
                 
-            this._gamePhaseStateController.TransitionTo(this._nextGameState);
+            this._gamePhaseStateManager.TransitionTo(this._nextGameState);
         }
 
         this._isPhaseRunning = false;
     }
 
     private void GameEndingPhase() {
-        this._nextGameState = this._gamePhaseStateController.GamePhaseStateEnding;
-        this._gamePhaseStateController.TransitionTo(this._nextGameState);
+        this._nextGameState = this._gamePhaseStateManager.GamePhaseStateEnding;
+        this._gamePhaseStateManager.TransitionTo(this._nextGameState);
     }
 
     
-
-    // // Combat Phase 시작
-    //     // Cargo 활성화
-    //     if (CargoHitController.Instance != null)
-    //     {
-    //         CargoHitController.Instance.ResetCargo();
-    //     }
-    //
-    //     // Enemy 스폰 시작
-    //     if (Enemy.Instance != null)
-    //     {
-    //         Enemy.Instance.StartSpawning();
-    //     }
-    //
-    //     // Turret 활성화
-    //     if (Turret.Instance != null)
-    //     {
-    //         Turret.Instance.EnableShooting(true);
-    //     }
-    //
-    //     // Interface 업데이트
-    //     if (Interface.Instance != null)
-    //     {
-    //         Interface.Instance.ShowCombatPhase();
-    //     }
-    //
-    //     // 모바일로 Phase 변경 전송
-    //     if (Server.Instance != null)
-    //     {
-    //         Server.Instance.BroadcastPhaseChange("combat");
-    //     }
-    //
-    //     Debug.Log("=== Combat Phase 시작 완료 ===");
-    // }
-    //
+    
     // // Combat Phase 종료
     // void EndCombatPhase(bool victory)
     // {

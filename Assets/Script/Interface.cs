@@ -106,7 +106,7 @@ public class Interface : MonoBehaviour
     // Ready Phase 표시
     public void ShowReadyPhase()
     {
-        int playerCount = Server.Instance != null ? Server.Instance.playerCount : 0;
+        int playerCount = ServerManager.Instance != null ? ServerManager.Instance.playerCount : 0;
 
         if (playerCount == 0)
         {
@@ -145,14 +145,14 @@ public class Interface : MonoBehaviour
     // ✅ 플레이어 목록 업데이트 (슬롯 기반)
     public void UpdatePlayerList()
     {
-        if (Server.Instance == null || PlayerName_Ready == null) return;
+        if (ServerManager.Instance == null || PlayerName_Ready == null) return;
 
         // ✅ 4개의 고정 슬롯을 만들어서 관리
         string[] slotNames = new string[4] { "", "", "", "" };
 
         // ✅ 플레이어를 슬롯 번호에 맞춰 배치
-        Debug.Log($"=== UpdatePlayerList: 총 {Server.Instance.players.Count}명 ===");
-        foreach (var player in Server.Instance.players.Values)
+        Debug.Log($"=== UpdatePlayerList: 총 {ServerManager.Instance.players.Count}명 ===");
+        foreach (var player in ServerManager.Instance.players.Values)
         {
             Debug.Log($"Player: {player.nickname}, Slot: {player.slot}, Color: {player.color}");
 
@@ -176,9 +176,9 @@ public class Interface : MonoBehaviour
     // 플레이어 수 업데이트
     void UpdatePlayerCount()
     {
-        if (PlayerNum_Ready != null && Server.Instance != null)
+        if (PlayerNum_Ready != null && ServerManager.Instance != null)
         {
-            int count = Server.Instance.playerCount;
+            int count = ServerManager.Instance.playerCount;
             PlayerNum_Ready.text = $"({count}/4)";
         }
     }

@@ -32,9 +32,9 @@ public class GC_CheatBoxManager : GC_SingletonImplementer<GC_CheatBoxManager> {
         Debug.Log($"Cheat: GiveGoldToAllPlayers() = {this._goldAmount}");
 
         // 서버로 골드 지급 이벤트 전송
-        if (Server.Instance != null) {
+        if (ServerManager.Instance != null) {
             var jsonData = JsonUtility.ToJson(new { gold = this._goldAmount });
-            Server.Instance.SendToServer("giveGold", jsonData);
+            ServerManager.Instance.SendToServer("giveGold", jsonData);
         }
     }
 
