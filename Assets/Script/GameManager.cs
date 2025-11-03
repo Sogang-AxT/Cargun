@@ -78,11 +78,16 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
     private void GamePhaseUpdate() {
         if (!this._isPhaseRunning) {
             this._isPhaseRunning = true;
-            this.CurrentWave += 1;    
             
-            this._nextGameState = (this._gamePhaseStateManager.CurrentGamePhase == GC_EnumManager.GAMEPHASE.READY) ? 
+            var currentGamePhase = this._gamePhaseStateManager.CurrentGamePhase;
+            
+            if (currentGamePhase == GC_EnumManager.GAMEPHASE.COMBAT) {
+                this.CurrentWave += 1;
+            }
+            
+            this._nextGameState = (currentGamePhase == GC_EnumManager.GAMEPHASE.COMBAT) ? 
                 this._gamePhaseStateManager.GamePhaseStateReady : this._gamePhaseStateManager.GamePhaseStateCombat;
-                
+
             this._gamePhaseStateManager.TransitionTo(this._nextGameState);
         }
 

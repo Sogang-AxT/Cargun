@@ -16,7 +16,8 @@ public class GamePhaseStateManager {
         this.GamePhaseStateCombat = new (manager);
         this.GamePhaseStateEnding = new (manager);
         
-        this.CurrentGamePhaseState = this.GamePhaseStateReady;
+        this.CurrentGamePhaseState = this.GamePhaseStateCombat;
+        this.CurrentGamePhase = GC_EnumManager.GAMEPHASE.COMBAT;
         this.ReadyTimer = 30;
         this.CombatTimer = 90;
     }
