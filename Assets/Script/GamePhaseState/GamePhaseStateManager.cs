@@ -2,14 +2,16 @@ using System.Collections;
 using UnityEngine;
 
 public class GamePhaseStateManager {
+    public GC_EnumManager.GAMEPHASE CurrentGamePhase { get; private set; }
     public IGamePhaseState CurrentGamePhaseState { get; private set; }
+    
     public GamePhaseStateReady GamePhaseStateReady { get; }
     public GamePhaseStateCombat GamePhaseStateCombat { get; }
     public GamePhaseStateEnding GamePhaseStateEnding { get; }
-    public GC_EnumManager.GAMEPHASE CurrentGamePhase { get; private set; }
     
     public int ReadyTimer { get; private set; }   // 30f
     public int CombatTimer { get; private set; }  // 90f
+    
 
     public GamePhaseStateManager(GamePhaseStateManager manager) {
         this.GamePhaseStateReady = new (manager);
@@ -18,6 +20,7 @@ public class GamePhaseStateManager {
         
         this.CurrentGamePhaseState = this.GamePhaseStateCombat;
         this.CurrentGamePhase = GC_EnumManager.GAMEPHASE.COMBAT;
+        
         this.ReadyTimer = 30;
         this.CombatTimer = 90;
     }
@@ -30,5 +33,6 @@ public class GamePhaseStateManager {
 
     public void SetGamePhase(GC_EnumManager.GAMEPHASE phase) {
         this.CurrentGamePhase = phase;
+        ServerManager.OnBroadcastPhaseChange.Invoke(this.CurrentGamePhase);
     }
 }
