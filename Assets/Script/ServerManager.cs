@@ -37,24 +37,20 @@ using Newtonsoft.Json.Linq;
 
 public class ServerManager : GC_SingletonImplementer<ServerManager> {
     public static UnityEvent<GC_EnumManager.GAMEPHASE> OnBroadcastPhaseChange;
-    
     private readonly string _serverURL = "https://mgtul.duckdns.org";
-    
-    public Dictionary<string, PlayerData> players = new Dictionary<string, PlayerData>();
-    public int playerCount = 0;
-    public Dictionary<string, int[]> upgradeStates = new Dictionary<string, int[]>();
 
-#if !UNITY_WEBGL || UNITY_EDITOR
-    // 에디터용 SocketIOClient
-    private SocketIOUnity socket;
-    private Queue<Action> mainThreadActions = new Queue<Action>();
-    private object queueLock = new object();
+    private System.Uri _serverURI;
+    private bool _isConnected;
+    // public Dictionary<string, PlayerData> players;
+    // public Dictionary<string, int[]> upgradeStates;
+
+#if UNITY_EDITOR
+    private SocketIOUnity _socket;
+    private Queue<Action> _mainThreadActions;
+    private object _queueLock;
 #endif
-
-    private bool isConnected = false;
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-    // WebGL용 JavaScript 함수 import
+    
+#if UNITY_WEBGL
     [DllImport("__Internal")]
     private static extern void InitSocketIO(string url);
     
@@ -71,72 +67,78 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
     private static extern void DisconnectSocket();
 #endif
 
-    void Awake() {
-        // 업그레이드 초기화
-        upgradeStates["A"] = new int[4] { 0, 0, 0, 0 };
-        upgradeStates["B"] = new int[4] { 0, 0, 0, 0 };
-        upgradeStates["C"] = new int[4] { 0, 0, 0, 0 };
-        upgradeStates["D"] = new int[4] { 0, 0, 0, 0 };
+
+    private void Init() {
+        this._serverURI = null;
+        this._isConnected = false;
+        
+        this._mainThreadActions = new();
+        this._queueLock = new();
+
+        // 업그레이드 초기화; 이걸 왜 여기서...?
+        // upgradeStates["A"] = new int[4] { 0, 0, 0, 0 };
+        // upgradeStates["B"] = new int[4] { 0, 0, 0, 0 };
+        // upgradeStates["C"] = new int[4] { 0, 0, 0, 0 };
+        // upgradeStates["D"] = new int[4] { 0, 0, 0, 0 };
+    }
+    
+    private void Awake() {
+        Init();
     }
 
-    void Start() {
+    private void Start() {
         ConnectToServer();
     }
 
-    void Update() {
-#if !UNITY_WEBGL || UNITY_EDITOR
+    private void Update() {
+#if UNITY_EDITOR
         // 에디터: 메인 스레드에서 큐 처리
-        lock (queueLock) {
-            while (mainThreadActions.Count > 0) {
-                var action = mainThreadActions.Dequeue();
+        lock (this._queueLock) {
+            while (this._mainThreadActions.Count > 0) {
+                var action = this._mainThreadActions.Dequeue();
                 action?.Invoke();
             }
         }
 #endif
     }
 
-    void ConnectToServer() {
-#if UNITY_WEBGL && !UNITY_EDITOR
+    private void ConnectToServer() {
+#if UNITY_WEBGL
         // WebGL 빌드
-        Debug.Log("🌐 WebGL 모드: JavaScript Bridge 사용");
+        Debug.Log("WebGL Mode: JavaScript Bridge");
         InitSocketIO(serverURL);
-#else
-        // 에디터 모드
-        Debug.Log("🖥️ 에디터 모드: SocketIOClient 사용");
+#endif
+#if UNITY_EDITOR
+        Debug.Log("Editor Mode: Socket IO Client");
         ConnectToServerEditor();
 #endif
     }
 
-#if !UNITY_WEBGL || UNITY_EDITOR
-    // 에디터용 연결
-    void ConnectToServerEditor() {
-        var uri = new System.Uri(_serverURL);
-        socket = new SocketIOUnity(uri);
+#if UNITY_EDITOR
+    private void ConnectToServerEditor() {
+        this._serverURI = new System.Uri(this._serverURL);
+        this._socket = new SocketIOUnity(this._serverURI);
 
-        socket.OnConnected += (sender, e) => {
-            isConnected = true;
-            Debug.Log("✅ 서버 연결 성공! (에디터)");
+        this._socket.OnConnected += (sender, e) => {
+            this._isConnected = true;
+            Debug.Log("Server Connected. (Editor)");
 
-            // ✅ Unity의 현재 Phase를 서버에 전송
-            string currentGamePhase = "ready";
-            if (GameManager.Instance != null) {
-                currentGamePhase = GameManager.Instance.currentPhase;
-            }
+            // 현재 Phase를 서버에 전송
+            var unityClient = new JObject {
+                ["connectType"] = "unityEditor",
+                ["currentPhase"] = ;
+            };
 
-            var unityClient = new JObject();
-            unityClient["type"] = "unity";
-            unityClient["currentPhase"] = currentGamePhase; // ✅ 이 줄 추가!
-
-            socket.Emit("registerUnity", unityClient);
+            _socket.Emit("registerUnity", unityClient);
             Debug.Log($"Unity 클라이언트 등록 완료 (Phase: {currentGamePhase})");
         };
 
-        socket.OnDisconnected += (sender, e) => {
-            isConnected = false;
+        _socket.OnDisconnected += (sender, e) => {
+            _isConnected = false;
             Debug.Log("❌ 서버 연결 끊김 (에디터)");
         };
 
-        socket.On("joined", (response) => {
+        _socket.On("joined", (response) => {
             RunOnMainThread(() => {
                 try {
                     var data = response.GetValue<JObject>();
@@ -162,11 +164,11 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
             });
         });
 
-        socket.On("roomFull", (response) => {
+        _socket.On("roomFull", (response) => {
             Debug.Log("방 만원: " + response);
         });
 
-        socket.On("playerList", (response) => {
+        _socket.On("playerList", (response) => {
             RunOnMainThread(() => {
                 try {
                     string rawJson = response.ToString();
@@ -222,7 +224,7 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
         });
 
         // ✅ updateTurret 이벤트 수정 - JSON 파싱 방식 변경
-        socket.On("updateTurret", (response) => {
+        _socket.On("updateTurret", (response) => {
             RunOnMainThread(() => {
                 try {
                     string rawJson = response.ToString();
@@ -244,7 +246,7 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
             });
         });
 
-        socket.On("upgradeApplied", (response) => {
+        _socket.On("upgradeApplied", (response) => {
             RunOnMainThread(() => {
                 try {
                     var data = response.GetValue<JObject>();
@@ -265,7 +267,7 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
             });
         });
 
-        socket.On("phaseChange", (response) => {
+        _socket.On("phaseChange", (response) => {
             RunOnMainThread(() => {
                 try {
                     string phase = response.ToString().Trim('"');
@@ -290,12 +292,12 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
             });
         });
 
-        socket.Connect();
+        _socket.Connect();
     }
 
     void RunOnMainThread(Action action) {
-        lock (queueLock) {
-            mainThreadActions.Enqueue(action);
+        lock (_queueLock) {
+            _mainThreadActions.Enqueue(action);
         }
     }
 #endif
@@ -454,8 +456,8 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
 #if UNITY_WEBGL && !UNITY_EDITOR
         EmitToServer(eventName, jsonData);
 #else
-        if (socket != null && isConnected) {
-            socket.Emit(eventName, jsonData);
+        if (_socket != null && _isConnected) {
+            _socket.Emit(eventName, jsonData);
         }
 #endif
     }
@@ -465,8 +467,8 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
 #if UNITY_WEBGL && !UNITY_EDITOR
         EmitToServer("phaseChange", $"\"{phase}\"");
 #else
-        if (socket != null && isConnected) {
-            socket.Emit("phaseChange", phase);
+        if (_socket != null && _isConnected) {
+            _socket.Emit("phaseChange", phase);
         }
 #endif
     }
@@ -475,8 +477,8 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
 #if UNITY_WEBGL && !UNITY_EDITOR
         DisconnectSocket();
 #else
-        if (socket != null) {
-            socket.Disconnect();
+        if (_socket != null) {
+            _socket.Disconnect();
         }
 #endif
     }

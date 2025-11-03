@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 
 public class GamePhaseStateManager {
-    public GC_EnumManager.GAMEPHASE CurrentGamePhase { get; private set; }
     public IGamePhaseState CurrentGamePhaseState { get; private set; }
     
     public GamePhaseStateReady GamePhaseStateReady { get; }
@@ -19,12 +18,13 @@ public class GamePhaseStateManager {
         this.GamePhaseStateEnding = new (manager);
         
         this.CurrentGamePhaseState = this.GamePhaseStateCombat;
-        this.CurrentGamePhase = GC_EnumManager.GAMEPHASE.COMBAT;
         
         this.ReadyTimer = 30;
         this.CombatTimer = 90;
+        
+        this.CurrentGamePhase = GC_EnumManager.GAMEPHASE.COMBAT;
     }
-
+    
     public void TransitionTo(IGamePhaseState nextState) {
         this.CurrentGamePhaseState?.Exit();
         this.CurrentGamePhaseState = nextState;

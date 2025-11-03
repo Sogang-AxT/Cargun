@@ -3,10 +3,11 @@
 public class GameManager : GC_SingletonImplementer<GameManager> {
     private GamePhaseStateManager _gamePhaseStateManager;
     
-    public int CurrentPlayer { get; private set; }  // 0
-    public int CurrentWave { get; private set; }    // 1
-    public int MaxWave { get; private set; }        // 10
-
+    // TODO: GameData로 이동
+    // public int CurrentPlayer { get; private set; }  // 0
+    // public int CurrentWave { get; private set; }    // 1
+    // public int MaxWave { get; private set; }        // 10
+    
     private bool _isPlayerCountValid;       // true
     private bool _isBaseMoving;             // false
     private bool _isPhaseRunning;           // false 
@@ -20,9 +21,9 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
         
         // TODO: 데이터 모델에서 참조하도록 변경
         this._nextGameState = null;
-        this.CurrentPlayer = 0;
-        this.CurrentWave = 0;
-        this.MaxWave = 10;
+        // this.CurrentPlayer = 0;
+        // this.CurrentWave = 0;
+        // this.MaxWave = 10;
 
         this._isPlayerCountValid = false;
         this._isBaseMoving = false;
@@ -35,13 +36,13 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
 
     private void Update() {
         // 플레이어 수가 충분한가?
-        if (this.CurrentPlayer < GameData.Instance.MinPlayer) {
+        if (GameData.Instance.CurrentPlayer < GameData.Instance.MinPlayer) {
             // TODO: Game Reset; Enemy 제거 -> Turret 발사 중지 -> Base 원위치 -> Ready Phase -> Cargo 리셋 -> Interface 업데이트 -> 모바일로 Phase 변경 전송
             return;
         }
         
         // 마지막 웨이브 달성?
-        if (this.CurrentWave >= this.MaxWave) { 
+        if (GameData.Instance.CurrentWave >= GameData.Instance.MaxWave) { 
             GameEndingPhase();
         }
 
@@ -53,11 +54,11 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
             this._isPhaseRunning = true;
             
             // 초기값 = COMBAT
-            var currentGamePhase = this._gamePhaseStateManager.CurrentGamePhase;    
+            var currentGamePhase = this._gamePhaseStateManager.CurrentGamePhase;
             
             // 전투 페이스일 때만 웨이브 값 증가
             if (currentGamePhase == GC_EnumManager.GAMEPHASE.COMBAT) {
-                this.CurrentWave += 1;  
+                GameData.Instance.CurrentWave += 1;
             }
             
             // COMBAT -> (NEXT) READY; READY -> (NEXT) COMBAT
