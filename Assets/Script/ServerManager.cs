@@ -36,35 +36,25 @@ using Newtonsoft.Json.Linq;
 // }
 
 public class ServerManager : GC_SingletonImplementer<ServerManager> {
-    public static UnityEvent<GC_EnumManager.GAMEPHASE> OnBroadcastPhaseChange;
+    public static UnityEvent<GC_EnumManager.GAMEPHASE> OnGamePhaseChange;
     private readonly string _serverURL = "https://mgtul.duckdns.org";
 
+    private GC_EnumManager.CONNECT_TYPE _connectType;
     private System.Uri _serverURI;
     private bool _isConnected;
-    // public Dictionary<string, PlayerData> players;
+    private Dictionary<string, PlayerData> _players;
     // public Dictionary<string, int[]> upgradeStates;
 
 #if UNITY_EDITOR
     private SocketIOUnity _socket;
     private Queue<Action> _mainThreadActions;
     private object _queueLock;
-#endif
-    
-#if UNITY_WEBGL
-    [DllImport("__Internal")]
-    private static extern void InitSocketIO(string url);
-    
-    [DllImport("__Internal")]
-    private static extern bool RegisterUnityClient();
-    
-    [DllImport("__Internal")]
-    private static extern bool EmitToServer(string eventName, string jsonData);
-    
-    [DllImport("__Internal")]
-    private static extern bool IsSocketConnected();
-    
-    [DllImport("__Internal")]
-    private static extern void DisconnectSocket();
+#elif UNITY_WEBGL
+    [DllImport("__Internal")] private static extern void InitSocketIO(string url);
+    [DllImport("__Internal")] private static extern bool RegisterUnityClient();
+    [DllImport("__Internal")] private static extern bool EmitToServer(string eventName, string jsonData);
+    [DllImport("__Internal")] private static extern bool IsSocketConnected();
+    [DllImport("__Internal")] private static extern void DisconnectSocket();
 #endif
 
 
@@ -74,7 +64,9 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
         
         this._mainThreadActions = new();
         this._queueLock = new();
-
+        
+        OnGamePhaseChange.AddListener(GamePhaseChange);
+        
         // 업그레이드 초기화; 이걸 왜 여기서...?
         // upgradeStates["A"] = new int[4] { 0, 0, 0, 0 };
         // upgradeStates["B"] = new int[4] { 0, 0, 0, 0 };
@@ -87,12 +79,15 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
     }
 
     private void Start() {
-        ConnectToServer();
+#if UNITY_EDITOR
+        ConnectToServerEditor();
+#elif UNITY_WEBGL
+        ConnectToServerWebGL();
+#endif
     }
 
     private void Update() {
 #if UNITY_EDITOR
-        // 에디터: 메인 스레드에서 큐 처리
         lock (this._queueLock) {
             while (this._mainThreadActions.Count > 0) {
                 var action = this._mainThreadActions.Dequeue();
@@ -102,56 +97,42 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
 #endif
     }
 
-    private void ConnectToServer() {
-#if UNITY_WEBGL
-        // WebGL 빌드
-        Debug.Log("WebGL Mode: JavaScript Bridge");
-        InitSocketIO(serverURL);
-#endif
-#if UNITY_EDITOR
-        Debug.Log("Editor Mode: Socket IO Client");
-        ConnectToServerEditor();
-#endif
+    private void GamePhaseChange(GC_EnumManager.GAMEPHASE phase) {
+        
     }
-
-#if UNITY_EDITOR
+    
     private void ConnectToServerEditor() {
+        this._connectType = GC_EnumManager.CONNECT_TYPE.EDITOR;
         this._serverURI = new System.Uri(this._serverURL);
         this._socket = new SocketIOUnity(this._serverURI);
-
+        
         this._socket.OnConnected += (sender, e) => {
             this._isConnected = true;
-            Debug.Log("Server Connected. (Editor)");
-
-            // 현재 Phase를 서버에 전송
+            
             var unityClient = new JObject {
-                ["connectType"] = "unityEditor",
-                ["currentPhase"] = ;
+                ["connectType"] = this._connectType.ToString()
             };
 
-            _socket.Emit("registerUnity", unityClient);
-            Debug.Log($"Unity 클라이언트 등록 완료 (Phase: {currentGamePhase})");
+            this._socket.Emit("registerUnity", unityClient);
         };
 
-        _socket.OnDisconnected += (sender, e) => {
-            _isConnected = false;
-            Debug.Log("❌ 서버 연결 끊김 (에디터)");
+        this._socket.OnDisconnected += (sender, e) => {
+            this._isConnected = false;
         };
 
-        _socket.On("joined", (response) => {
+        this._socket.On("joined", (response) => {
             RunOnMainThread(() => {
                 try {
-                    var data = response.GetValue<JObject>();
-                    PlayerData player = new PlayerData {
-                        id = data["id"].ToString(),
-                        nickname = data["nickname"].ToString(),
-                        color = data["color"].ToString(),
-                        turret = data["turret"].ToString()
+                    var jObjectData = response.GetValue<JObject>();
+                    var player = new PlayerData { 
+                        id = jObjectData["id"]?.ToString(), 
+                        nickName = jObjectData["nickname"]?.ToString(),
+                        color = jObjectData["color"]?.ToString(),
+                        turret = jObjectData["turret"]?.ToString()
                     };
 
-                    if (!players.ContainsKey(player.id)) {
-                        players[player.id] = player;
-                        playerCount++;
+                    if (this._players.TryAdd(player.id, player)) {
+                        GameData.Instance.CurrentPlayer += 1;
                     }
 
                     if (Interface.Instance != null) {
@@ -177,7 +158,7 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
                         rawJson = rawJson.Substring(1, rawJson.Length - 2);
                     }
 
-                    players.Clear();
+                    _players.Clear();
                     playerCount = 0;
 
                     if (string.IsNullOrEmpty(rawJson) || rawJson == "{}") {
@@ -204,7 +185,7 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
                                 slot = int.Parse(playerObj["slot"]?.ToString() ?? "1")
                             };
 
-                            players[player.id] = player;
+                            _players[player.id] = player;
                             playerCount++;
                         }
                     }
@@ -300,9 +281,8 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
             _mainThreadActions.Enqueue(action);
         }
     }
-#endif
 
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL
     // WebGL 빌드용 함수들
     public void OnSocketConnected() {
         isConnected = true;
@@ -453,7 +433,7 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
 
     // 서버로 메시지 전송
     public void SendToServer(string eventName, string jsonData) {
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL
         EmitToServer(eventName, jsonData);
 #else
         if (_socket != null && _isConnected) {
@@ -464,7 +444,7 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
 
     // Phase 변경 브로드캐스트
     public void BroadcastPhaseChange(string phase) {
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL
         EmitToServer("phaseChange", $"\"{phase}\"");
 #else
         if (_socket != null && _isConnected) {
@@ -474,7 +454,7 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
     }
 
     void OnApplicationQuit() {
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL
         DisconnectSocket();
 #else
         if (_socket != null) {

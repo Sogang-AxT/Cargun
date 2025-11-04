@@ -4,4 +4,9 @@ public static class GC_EnumManager {
         COMBAT,
         ENDING
     }
+
+    public enum CONNECT_TYPE {
+        EDITOR,
+        WEBGL
+    }
 }

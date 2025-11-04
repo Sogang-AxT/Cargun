@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class GamePhaseStateManager {
     public IGamePhaseState CurrentGamePhaseState { get; private set; }
+    public GC_EnumManager.GAMEPHASE CurrentGamePhase { get; private set; }
     
     public GamePhaseStateReady GamePhaseStateReady { get; }
     public GamePhaseStateCombat GamePhaseStateCombat { get; }
@@ -33,6 +34,6 @@ public class GamePhaseStateManager {
 
     public void SetGamePhase(GC_EnumManager.GAMEPHASE phase) {
         this.CurrentGamePhase = phase;
-        ServerManager.OnBroadcastPhaseChange.Invoke(this.CurrentGamePhase);
+        ServerManager.OnGamePhaseChange.Invoke(phase);
     }
 }

@@ -33,7 +33,7 @@ public class GamePhaseStateCombat : MonoBehaviour, IGamePhaseState {
     }
 
     public void Exit() {
-        this._phaseTimer = 0;        
+        this._phaseTimer = 0;
         
         // TODO: 준비 단계 탈출 시 수행할 작업 구현; 이벤트 호출 방식
         ShipStationManager.OnStationMoveIn.Invoke();                // Station Move In
