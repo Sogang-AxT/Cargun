@@ -46,8 +46,8 @@ public class GC_CheatBoxManager : GC_SingletonImplementer<GC_CheatBoxManager> {
             GameManager.Instance.currentPhase = "ready";
         }
 
-        if (Interface.Instance != null) {
-            Interface.Instance.ShowReadyPhase();
+        if (InterfaceManager.Instance != null) {
+            InterfaceManager.Instance.ShowReadyPhase();
         }
     }
 
@@ -59,8 +59,8 @@ public class GC_CheatBoxManager : GC_SingletonImplementer<GC_CheatBoxManager> {
             GameManager.Instance.currentPhase = "combat";
         }
 
-        if (Interface.Instance != null) {
-            Interface.Instance.ShowCombatPhase();
+        if (InterfaceManager.Instance != null) {
+            InterfaceManager.Instance.ShowCombatPhase();
         }
     }
 

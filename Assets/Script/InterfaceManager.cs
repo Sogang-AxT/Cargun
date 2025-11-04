@@ -3,9 +3,8 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Interface : MonoBehaviour
-{
-    public static Interface Instance;
+public class InterfaceManager : MonoBehaviour {
+    public static InterfaceManager Instance;
 
     [Header("QR Code")]
     public GameObject QRCode;

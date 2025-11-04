@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 // TODO: 터릿 4개 -> 터릿 1개 (개별)
-public class CargunShipTurretController : MonoBehaviour {
+public class CargunShipTurretController : GC_SingletonImplementer<CargunShipTurretController> {
     [Header("Turret Objects")]
     public GameObject Bullet;
     public GameObject PivotA, PivotB, PivotC, PivotD;

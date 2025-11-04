@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyUnit : MonoBehaviour {
+public class EnemyController : MonoBehaviour {
     [Header("Movement")]
     public float moveSpeed = 2f;
     public float zigzagAmplitude = 1f; // ������� ��
@@ -68,8 +68,8 @@ public class EnemyUnit : MonoBehaviour {
     // Enemy ����
     void DestroyEnemy() {
         // Enemy ����Ʈ���� ����
-        if (Enemy.Instance != null) {
-            Enemy.Instance.RemoveEnemy(gameObject);
+        if (EnemyData.Instance != null) {
+            EnemyData.Instance.RemoveEnemy(gameObject);
         }
 
         Destroy(gameObject);

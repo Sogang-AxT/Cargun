@@ -43,7 +43,7 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
     private System.Uri _serverURI;
     private bool _isConnected;
     private Dictionary<string, PlayerData> _players;
-    // public Dictionary<string, int[]> upgradeStates;
+    private Dictionary<string, int[]> _upgradeStates;
 
 #if UNITY_EDITOR
     private SocketIOUnity _socket;
@@ -67,11 +67,11 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
         
         OnGamePhaseChange.AddListener(GamePhaseChange);
         
-        // 업그레이드 초기화; 이걸 왜 여기서...?
-        // upgradeStates["A"] = new int[4] { 0, 0, 0, 0 };
-        // upgradeStates["B"] = new int[4] { 0, 0, 0, 0 };
-        // upgradeStates["C"] = new int[4] { 0, 0, 0, 0 };
-        // upgradeStates["D"] = new int[4] { 0, 0, 0, 0 };
+        // 업그레이드 초기화
+        this._upgradeStates["A"] = new int[4] { 0, 0, 0, 0 };
+        this._upgradeStates["B"] = new int[4] { 0, 0, 0, 0 };
+        this._upgradeStates["C"] = new int[4] { 0, 0, 0, 0 };
+        this._upgradeStates["D"] = new int[4] { 0, 0, 0, 0 };
     }
     
     private void Awake() {
@@ -135,150 +135,146 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
                         GameData.Instance.CurrentPlayer += 1;
                     }
 
-                    if (Interface.Instance != null) {
-                        Interface.Instance.UpdatePlayerList();
-                    }
+                    // TODO: View 조작
+                    // if (Interface.Instance != null) {
+                    //     Interface.Instance.UpdatePlayerList();
+                    // }
                 }
                 catch (System.Exception ex) {
-                    Debug.LogError("플레이어 입장 파싱 오류: " + ex.Message);
+                    Debug.LogError("[Error] Player data Parsing Error: " + ex.Message);
                 }
             });
         });
 
-        _socket.On("roomFull", (response) => {
-            Debug.Log("방 만원: " + response);
+        this._socket.On("roomFull", (response) => {
+            Debug.Log("The Room is full: " + response);
         });
 
-        _socket.On("playerList", (response) => {
+        this._socket.On("playerList", (response) => {
             RunOnMainThread(() => {
                 try {
-                    string rawJson = response.ToString();
+                    var rawJsonPlayerList = response.ToString();
 
-                    if (rawJson.StartsWith("[") && rawJson.EndsWith("]")) {
-                        rawJson = rawJson.Substring(1, rawJson.Length - 2);
+                    if (rawJsonPlayerList.StartsWith("[") && rawJsonPlayerList.EndsWith("]")) {
+                        rawJsonPlayerList = rawJsonPlayerList.Substring(1, rawJsonPlayerList.Length - 2);
                     }
 
-                    _players.Clear();
-                    playerCount = 0;
+                    this._players.Clear();
+                    // playerCount = 0;
 
-                    if (string.IsNullOrEmpty(rawJson) || rawJson == "{}") {
-                        if (Interface.Instance != null) {
-                            Interface.Instance.UpdatePlayerList();
-                            // ✅ Ready Phase일 때만 ShowReadyPhase 호출
-                            if (GameManager.Instance != null && GameManager.Instance.currentPhase == "ready") {
-                                Interface.Instance.ShowReadyPhase();
-                            }
-                        }
-                        return;
-                    }
+                    // TODO: View 조작
+                    // if (string.IsNullOrEmpty(rawJsonPlayerList) || rawJsonPlayerList == "{}") {
+                    //     if (Interface.Instance != null) {
+                    //         Interface.Instance.UpdatePlayerList();
+                    //         // Ready Phase -> ShowReadyPhase() call
+                    //         if (GameManager.Instance != null && GameManager.Instance.currentPhase == "ready") {
+                    //             Interface.Instance.ShowReadyPhase();
+                    //         }
+                    //     }
+                    //     return;
+                    // }
 
-                    JObject data = JObject.Parse(rawJson);
+                    var data = JObject.Parse(rawJsonPlayerList);
 
                     foreach (var kvp in data) {
-                        var playerObj = kvp.Value as JObject;
-                        if (playerObj != null) {
-                            PlayerData player = new PlayerData {
+                        if (kvp.Value is JObject playerObj) {
+                            var player = new PlayerData {
                                 id = playerObj["id"]?.ToString() ?? "",
-                                nickname = playerObj["nickname"]?.ToString() ?? "Unknown",
+                                nickName = playerObj["nickname"]?.ToString() ?? "Unknown",
                                 color = playerObj["color"]?.ToString() ?? "green",
                                 turret = playerObj["turret"]?.ToString() ?? "A",
                                 slot = int.Parse(playerObj["slot"]?.ToString() ?? "1")
                             };
 
-                            _players[player.id] = player;
-                            playerCount++;
+                            this._players[player.id] = player;
+                            // playerCount++;
                         }
                     }
 
-                    if (Interface.Instance != null) {
-                        Interface.Instance.UpdatePlayerList();
-                        // ✅ Ready Phase일 때만 ShowReadyPhase 호출
-                        if (GameManager.Instance != null && GameManager.Instance.currentPhase == "ready") {
-                            Interface.Instance.ShowReadyPhase();
-                        }
-                    }
+                    // TODO: View 조작
+                    // if (Interface.Instance != null) {
+                    //     Interface.Instance.UpdatePlayerList();
+                    //     // ✅ Ready Phase일 때만 ShowReadyPhase 호출
+                    //     if (GameManager.Instance != null && GameManager.Instance.currentPhase == "ready") {
+                    //         Interface.Instance.ShowReadyPhase();
+                    //     }
+                    // }
                 }
                 catch (System.Exception ex) {
-                    Debug.LogError($"플레이어 목록 파싱 오류: {ex.Message}");
+                    Debug.LogError("[Error] Player data Parsing Error: " + ex.Message);
                 }
             });
         });
-
-        // ✅ updateTurret 이벤트 수정 - JSON 파싱 방식 변경
-        _socket.On("updateTurret", (response) => {
+        
+        this._socket.On("updateTurret", (response) => {
             RunOnMainThread(() => {
                 try {
-                    string rawJson = response.ToString();
+                    var rawJson = response.ToString();
+                    
                     if (rawJson.StartsWith("[") && rawJson.EndsWith("]")) {
                         rawJson = rawJson.Substring(1, rawJson.Length - 2);
                     }
 
                     var data = JObject.Parse(rawJson);
-                    string turret = data["turret"]?.ToString() ?? "";
-                    float angle = float.Parse(data["angle"]?.ToString() ?? "0");
+                    var turret = data["turret"]?.ToString() ?? "";
+                    var angle = float.Parse(data["angle"]?.ToString() ?? "0");
 
-                    if (Turret.Instance != null) {
-                        Turret.Instance.UpdateTurretAngle(turret, angle);
+                    if (CargunShipTurretController.Instance != null) {
+                        CargunShipTurretController.Instance.UpdateTurretAngle(turret, angle);
                     }
                 }
                 catch (System.Exception ex) {
-                    Debug.LogError("터렛 각도 업데이트 오류: " + ex.Message);
+                    Debug.LogError("[Error] Turret Angle Update Error: " + ex.Message);
                 }
             });
         });
 
-        _socket.On("upgradeApplied", (response) => {
+        this._socket.On("upgradeApplied", (response) => {
             RunOnMainThread(() => {
                 try {
                     var data = response.GetValue<JObject>();
-                    string turret = data["turret"].ToString();
-                    string upgradeType = data["upgradeType"].ToString();
-                    int level = int.Parse(data["level"].ToString());
-
-                    int upgradeIndex = upgradeType[0] - 'A';
-                    if (upgradeIndex >= 0 && upgradeIndex < 4) {
-                        upgradeStates[turret][upgradeIndex] = level;
+                    var turret = data["turret"]?.ToString();
+                    var upgradeType = data["upgradeType"]?.ToString();
+                    var level = int.Parse(data["level"].ToString());
+                    var upgradeIndex = upgradeType[0] - 'A';
+                    
+                    if (upgradeIndex is >= 0 and < 4) {
+                        this._upgradeStates[turret][upgradeIndex] = level;
                     }
-
-                    Debug.Log($"업그레이드 적용: Turret {turret} - {upgradeType} Lv.{level}");
                 }
                 catch (System.Exception ex) {
-                    Debug.LogError("업그레이드 적용 오류: " + ex.Message);
+                    Debug.LogError("[Error] Turret Upgrade Error: " + ex.Message);
                 }
             });
         });
 
-        _socket.On("phaseChange", (response) => {
+        this._socket.On("phaseChange", (response) => {
             RunOnMainThread(() => {
                 try {
-                    string phase = response.ToString().Trim('"');
-                    Debug.Log($"Phase 변경 수신: {phase}");
+                    var phase = response.ToString().Trim('"');
 
-                    if (GameManager.Instance != null) {
-                        // GameManager.Instance.currentPhase = phase; // ✅ 제거: GameManager가 자체 관리
-                    }
-
-                    if (Interface.Instance != null) {
-                        if (phase == "ready") {
-                            Interface.Instance.ShowReadyPhase();
-                        }
-                        else if (phase == "combat") {
-                            Interface.Instance.ShowCombatPhase();
-                        }
-                    }
+                    // TODO: View 조작
+                    // if (Interface.Instance != null) {
+                    //     if (phase == "ready") {
+                    //         Interface.Instance.ShowReadyPhase();
+                    //     }
+                    //     else if (phase == "combat") {
+                    //         Interface.Instance.ShowCombatPhase();
+                    //     }
+                    // }
                 }
                 catch (System.Exception ex) {
-                    Debug.LogError("Phase 변경 오류: " + ex.Message);
+                    Debug.LogError("[Error] Phase change Error: " + ex.Message);
                 }
             });
         });
 
-        _socket.Connect();
+        this._socket.Connect();
     }
-
-    void RunOnMainThread(Action action) {
-        lock (_queueLock) {
-            _mainThreadActions.Enqueue(action);
+    
+    private void RunOnMainThread(Action action) {
+        lock (this._queueLock) {
+            this._mainThreadActions.Enqueue(action);
         }
     }
 

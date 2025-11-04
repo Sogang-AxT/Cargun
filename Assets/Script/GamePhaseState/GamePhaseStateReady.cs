@@ -36,11 +36,7 @@ public class GamePhaseStateReady : MonoBehaviour, IGamePhaseState {
 
     public void Exit() {
         this._phaseTimer = 0;
-        
         // TODO: 준비 단계 탈출 시 수행할 작업 구현; 이벤트 호출 방식
-        ShipStationManager.OnStationMoveOut.Invoke();           // Station Move Out
-        CargunShipManager.OnTurretActivate.Invoke(true);        // Turret ON
-        EnemySpawnManager.OnEnemySpawnActivate.Invoke(true);    // Enemy Spawn ON
     }
     
     private IEnumerator ReadyPhase() {

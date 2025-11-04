@@ -2,9 +2,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Enemy : MonoBehaviour
+public class EnemyData : MonoBehaviour
 {
-    public static Enemy Instance;
+    public static EnemyData Instance;
 
     [Header("Enemy Prefab")]
     public GameObject EnemyObject;
@@ -91,10 +91,10 @@ public class Enemy : MonoBehaviour
         activeEnemies.Add(enemy);
 
         // EnemyUnit ��ũ��Ʈ�� ���� ����
-        EnemyUnit enemyUnit = enemy.GetComponent<EnemyUnit>();
-        if (enemyUnit != null)
+        EnemyController enemyController = enemy.GetComponent<EnemyController>();
+        if (enemyController != null)
         {
-            enemyUnit.SetDirection(spawnLeft ? 1 : -1); // 1 = ������, -1 = ����
+            enemyController.SetDirection(spawnLeft ? 1 : -1); // 1 = ������, -1 = ����
         }
     }
 

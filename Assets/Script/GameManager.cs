@@ -3,11 +3,6 @@
 public class GameManager : GC_SingletonImplementer<GameManager> {
     private GamePhaseStateManager _gamePhaseStateManager;
     
-    // TODO: GameData로 이동
-    // public int CurrentPlayer { get; private set; }  // 0
-    // public int CurrentWave { get; private set; }    // 1
-    // public int MaxWave { get; private set; }        // 10
-    
     private bool _isPlayerCountValid;       // true
     private bool _isBaseMoving;             // false
     private bool _isPhaseRunning;           // false 
@@ -37,13 +32,14 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
     private void Update() {
         // 플레이어 수가 충분한가?
         if (GameData.Instance.CurrentPlayer < GameData.Instance.MinPlayer) {
-            // TODO: Game Reset; Enemy 제거 -> Turret 발사 중지 -> Base 원위치 -> Ready Phase -> Cargo 리셋 -> Interface 업데이트 -> 모바일로 Phase 변경 전송
+            // TODO: Game Reset Event Call
             return;
         }
         
         // 마지막 웨이브 달성?
         if (GameData.Instance.CurrentWave >= GameData.Instance.MaxWave) { 
             GameEndingPhase();
+            return;
         }
 
         GamePhaseUpdate();
