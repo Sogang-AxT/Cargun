@@ -98,7 +98,6 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
     }
 
     private void GamePhaseChange(GC_EnumManager.GAMEPHASE phase) {
-        
     }
     
     private void ConnectToServerEditor() {
@@ -130,7 +129,9 @@ public class ServerManager : GC_SingletonImplementer<ServerManager> {
                         color = jObjectData["color"]?.ToString(),
                         turret = jObjectData["turret"]?.ToString()
                     };
-
+                    
+                    
+                    // TODO: 플레이어 로그인 시, GameData로?
                     if (this._players.TryAdd(player.id, player)) {
                         GameData.Instance.CurrentPlayer += 1;
                     }

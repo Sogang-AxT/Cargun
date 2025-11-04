@@ -9,20 +9,16 @@ public class GamePhaseStateManager {
     public GamePhaseStateCombat GamePhaseStateCombat { get; }
     public GamePhaseStateEnding GamePhaseStateEnding { get; }
     
-    public int ReadyTimer { get; private set; }   // 30f
-    public int CombatTimer { get; private set; }  // 90f
+    public int ReadyPhaseTimer { get; private set; } = 30;
+    public int CombatPhaseTimer { get; private set; } = 90;
     
-
+    
     public GamePhaseStateManager(GamePhaseStateManager manager) {
         this.GamePhaseStateReady = new (manager);
         this.GamePhaseStateCombat = new (manager);
         this.GamePhaseStateEnding = new (manager);
         
         this.CurrentGamePhaseState = this.GamePhaseStateCombat;
-        
-        this.ReadyTimer = 30;
-        this.CombatTimer = 90;
-        
         this.CurrentGamePhase = GC_EnumManager.GAMEPHASE.COMBAT;
     }
     

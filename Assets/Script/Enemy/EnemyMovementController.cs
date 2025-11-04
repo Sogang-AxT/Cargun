@@ -1,19 +1,19 @@
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour {
+public class EnemyMovementController : MonoBehaviour {
     [Header("Movement")]
     public float moveSpeed = 2f;
-    public float zigzagAmplitude = 1f; // ������� ��
-    public float zigzagFrequency = 2f; // ������� ��
+    public float zigzagAmplitude = 1f;
+    public float zigzagFrequency = 2f;
 
-    private int direction = 1; // 1 = ����������, -1 = ��������
+    private int direction = 1;
     private Vector3 startPosition;
     private float timeOffset;
     private GameObject cargoTarget;
 
     void Start() {
         startPosition = transform.position;
-        timeOffset = Random.Range(0f, 100f); // ������� ������ ����
+        timeOffset = Random.Range(0f, 100f);
 
         // Cargo Ÿ�� ã��
         if (CargunShipHitController.Instance != null) {

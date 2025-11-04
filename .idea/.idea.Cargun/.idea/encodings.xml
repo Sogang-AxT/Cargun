@@ -3,9 +3,9 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Assets/Script/CargoHitBox.cs" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Assets/Script/CargunShip/CargunShipHitController.cs" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Assets/Script/Enemy/EnemyController.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/Script/CargunShip/CargunShipUpgradeInfo.cs" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Assets/Script/Enemy/EnemyData.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/Script/Enemy/EnemyMovementController.cs" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Assets/Script/ShipStation/ShipStationManager.cs" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Assets/Script/UpgradeInfo.cs" charset="UTF-8" />
   </component>
 </project>

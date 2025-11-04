@@ -91,10 +91,10 @@ public class EnemyData : MonoBehaviour
         activeEnemies.Add(enemy);
 
         // EnemyUnit ��ũ��Ʈ�� ���� ����
-        EnemyController enemyController = enemy.GetComponent<EnemyController>();
-        if (enemyController != null)
+        EnemyMovementController enemyMovementController = enemy.GetComponent<EnemyMovementController>();
+        if (enemyMovementController != null)
         {
-            enemyController.SetDirection(spawnLeft ? 1 : -1); // 1 = ������, -1 = ����
+            enemyMovementController.SetDirection(spawnLeft ? 1 : -1); // 1 = ������, -1 = ����
         }
     }
 

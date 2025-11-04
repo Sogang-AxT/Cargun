@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UpgradeInfo : MonoBehaviour
+public class CargunShipUpgradeInfo : MonoBehaviour
 {
     [Header("UI Elements")]
     public GameObject InfoPanel; // ���׷��̵� ���� �г�

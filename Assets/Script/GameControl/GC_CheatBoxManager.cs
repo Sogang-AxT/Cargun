@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 public class GC_CheatBoxManager : GC_SingletonImplementer<GC_CheatBoxManager> {
-    public static GC_CheatBoxManager Instance;
     private int _goldAmount = 1000;
     
 
@@ -67,7 +66,7 @@ public class GC_CheatBoxManager : GC_SingletonImplementer<GC_CheatBoxManager> {
     // Wave 증가
     private void IncreaseWave() {
         if (GameManager.Instance != null) {
-            Debug.Log($"Cheat: IncreaseWave() = {GameManager.Instance.currentWave}");
+            Debug.Log($"Cheat: IncreaseWave()");
             GameManager.Instance.currentWave++;
         }
     }

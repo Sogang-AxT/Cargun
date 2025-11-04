@@ -2,24 +2,15 @@
 
 public class GameManager : GC_SingletonImplementer<GameManager> {
     private GamePhaseStateManager _gamePhaseStateManager;
-    
+    private IGamePhaseState _nextGameState; // null
     private bool _isPlayerCountValid;       // true
     private bool _isBaseMoving;             // false
     private bool _isPhaseRunning;           // false 
-    private IGamePhaseState _nextGameState; // null
     
-    private readonly int minPlayersToStart = 1;
-
-
+    
     private void Init() {
         this._gamePhaseStateManager = new GamePhaseStateManager(this._gamePhaseStateManager);
-        
-        // TODO: 데이터 모델에서 참조하도록 변경
         this._nextGameState = null;
-        // this.CurrentPlayer = 0;
-        // this.CurrentWave = 0;
-        // this.MaxWave = 10;
-
         this._isPlayerCountValid = false;
         this._isBaseMoving = false;
         this._isPhaseRunning = false;
@@ -32,7 +23,6 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
     private void Update() {
         // 플레이어 수가 충분한가?
         if (GameData.Instance.CurrentPlayer < GameData.Instance.MinPlayer) {
-            // TODO: Game Reset Event Call
             return;
         }
         

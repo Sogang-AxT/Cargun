@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 
+// TODO: View
 public class InterfaceManager : MonoBehaviour {
     public static InterfaceManager Instance;
 

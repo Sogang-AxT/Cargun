@@ -15,16 +15,14 @@ public class GamePhaseStateReady : MonoBehaviour, IGamePhaseState {
     }
 
     public void Enter() {
-        this._gamePhaseStateManager.SetGamePhase(this._gamePhase);  // ENUM 설정; 외부 판별용
-        this._phaseTimer = this._gamePhaseStateManager.ReadyTimer;  // 타이머 초기화; Ready
+        this._gamePhaseStateManager.SetGamePhase(this._gamePhase);              // ENUM 설정; 외부 판별용
+        this._phaseTimer = this._gamePhaseStateManager.ReadyPhaseTimer;         // 타이머 초기화; Ready
         
         // TODO: 준비 단계 진입 시 수행할 작업 구현; 이벤트 호출 방식
         ShipStationManager.OnStationMoveIn.Invoke();                // Station Move In
         CargunShipManager.OnTurretActivate.Invoke(false);           // Turret OFF
         EnemySpawnManager.OnEnemySpawnActivate.Invoke(false);       // Enemy Spawn OFF
         CargunShipManager.OnCargoActivate.Invoke(true);             // Cargo Reset ON
-        
-        // View 업데이트; Interface.Instance.ShowCombatPhase()
         
         Execute();
     }
