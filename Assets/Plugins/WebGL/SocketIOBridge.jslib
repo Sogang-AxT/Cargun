@@ -91,6 +91,13 @@ mergeInto(LibraryManager.library, {
                 SendMessage('ServerManager', 'OnPhaseChanged', phase);
             });
             
+            // ✅ 게임 데이터 수신
+            socket.on('gameData', function(data) {
+                console.log("📥 게임 데이터:", data);
+                SendMessage('ServerManager', 'OnGameDataReceived', JSON.stringify(data));
+            });
+            
+            
             console.log("✅ Socket.IO 이벤트 리스너 등록 완료");
         }
     },

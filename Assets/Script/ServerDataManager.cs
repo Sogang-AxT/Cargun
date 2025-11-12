@@ -34,5 +34,15 @@ public class ServerDataManager : MonoBehaviour
             Debug.Log("Turret_Shoot : [" + string.Join(", ", Turret_Shoot) + "]");
             Debug.Log("Turret_Player : [" + string.Join(", ", Turret_Player) + "]");
         }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            GetComponent<ServerManager>().BroadcastPhaseChange("prepare");
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            GetComponent<ServerManager>().BroadcastPhaseChange("battle");
+        }
     }
 }
