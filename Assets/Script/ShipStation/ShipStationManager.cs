@@ -22,8 +22,8 @@ public class ShipStationManager : MonoBehaviour {
         this._inPosition = new Vector3(0, 30, 0);
         this._outPosition = new Vector3(0, -30, 0);
         
-        OnStationMoveIn.AddListener(MoveIn);
-        OnStationMoveOut.AddListener(MoveOut);
+        //OnStationMoveIn.AddListener(MoveIn);
+        //OnStationMoveOut.AddListener(MoveOut);
     }
     
     private void Awake() {

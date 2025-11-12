@@ -4,7 +4,7 @@ using UnityEngine;
 public class CargunShipHitController : MonoBehaviour {
     private void Init() {
         CargoActivate(true);
-        CargunShipManager.OnCargoActivate.AddListener(CargoActivate);
+        //CargunShipManager.OnCargoActivate.AddListener(CargoActivate);
     }
     
     private void Awake() {

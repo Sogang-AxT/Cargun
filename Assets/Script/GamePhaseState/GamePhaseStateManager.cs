@@ -30,6 +30,6 @@ public class GamePhaseStateManager {
 
     public void SetGamePhase(GC_EnumManager.GAMEPHASE phase) {
         this.CurrentGamePhase = phase;
-        ServerManager.OnGamePhaseChange.Invoke(phase);
+        //ServerManager.OnGamePhaseChange.Invoke(phase);
     }
 }

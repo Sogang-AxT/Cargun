@@ -15,10 +15,12 @@ public class EnemyMovementController : MonoBehaviour {
         startPosition = transform.position;
         timeOffset = Random.Range(0f, 100f);
 
+        /*
         // Cargo Ÿ�� ã��
         if (CargunShipHitController.Instance != null) {
             cargoTarget = CargunShipHitController.Instance.CargoHitBox;
         }
+        */
     }
 
     void Update() {
