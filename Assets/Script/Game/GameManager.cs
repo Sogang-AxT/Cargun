@@ -1,6 +1,9 @@
-﻿using UnityEngine.Events;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
-public class GameManager : GC_SingletonImplementer<GameManager> {
+public class GameManager : MonoBehaviour {
+    public static UnityEvent OnPlayerJoin = new();
+    
     private GamePhaseStateManager _gamePhaseStateManager;
     private IGamePhaseState _nextGameState; // null
     private bool _isPlayerCountValid;       // true
@@ -44,7 +47,7 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
             
             // 전투 페이스일 때만 웨이브 값 증가
             if (currentGamePhase == GC_EnumManager.GAMEPHASE.COMBAT) {
-                GameData.Instance.CurrentWave += 1;
+                GameData.Instance.CurrentWave += 1; // TODO: 비용 문제 해결
             }
             
             // COMBAT -> (NEXT) READY; READY -> (NEXT) COMBAT
@@ -58,7 +61,6 @@ public class GameManager : GC_SingletonImplementer<GameManager> {
 
     private void GameEndingPhase() {
         this._nextGameState = this._gamePhaseStateManager.GamePhaseStateEnding;
-        // TODO: 엔딩 페이스 구현
         this._gamePhaseStateManager.TransitionTo(this._nextGameState);
     }
 }

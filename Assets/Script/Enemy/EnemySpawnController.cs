@@ -1,20 +1,15 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class EnemySpawnManager : MonoBehaviour {
-    public static UnityEvent<bool> OnEnemySpawnActivate;
-
+public class EnemySpawnController : MonoBehaviour {
     private float _enemySpawnTime;
-    
 
+    
     private void Init() {
         this._enemySpawnTime = 2f;
-        
-        OnEnemySpawnActivate.AddListener(EnemySpawn);
+        EnemyManager.OnEnemySpawnActivate.AddListener(EnemySpawn);
     }
-
+    
     private void Awake() {
         Init();
     }

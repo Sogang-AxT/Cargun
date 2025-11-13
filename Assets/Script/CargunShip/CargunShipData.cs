@@ -1,7 +1,7 @@
-public class CargunShipData : GC_SingletonImplementer<CargunShipData> {
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CargunShipData : ScriptableObject {
     public int hp;
     public int upgradeLevel;
-    public float turretAngle;
-    public string turret;
-    public string upgradeType;
 }

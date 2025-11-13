@@ -9,4 +9,20 @@ public static class GC_EnumManager {
         EDITOR,
         WEBGL
     }
+
+    public enum GAMETAG {
+        BULLET,
+        SHIP,
+    }
+
+    public enum ENEMY_TYPE {
+        DEFAULT,
+        SHIELD,
+        GROUP,
+        ZIGZAG,
+        WEAK,
+        PUPA,
+        BOMB,
+        SPLIT,
+    }
 }

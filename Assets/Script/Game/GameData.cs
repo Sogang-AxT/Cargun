@@ -18,5 +18,4 @@ public class GameData : GC_SingletonImplementer<GameData> {
         Init();
     }
     
-    
 }

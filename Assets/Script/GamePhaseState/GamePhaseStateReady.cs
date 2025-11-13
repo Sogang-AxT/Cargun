@@ -19,10 +19,9 @@ public class GamePhaseStateReady : MonoBehaviour, IGamePhaseState {
         this._phaseTimer = this._gamePhaseStateManager.ReadyPhaseTimer;         // 타이머 초기화; Ready
         
         // TODO: 준비 단계 진입 시 수행할 작업 구현; 이벤트 호출 방식
-        ShipStationManager.OnStationMoveIn.Invoke();                // Station Move In
-        CargunShipManager.OnTurretActivate.Invoke(false);           // Turret OFF
-        EnemySpawnManager.OnEnemySpawnActivate.Invoke(false);       // Enemy Spawn OFF
-        CargunShipManager.OnCargoActivate.Invoke(true);             // Cargo Reset ON
+        ShipStationManager.OnStationMoveIn.Invoke();                // Station Move In; OK
+        CargunShipManager.OnTurretActivate.Invoke(false);           // Turret OFF; OK
+        EnemyManager.OnEnemySpawnActivate.Invoke(false);            // Enemy Spawn OFF; OK
         
         Execute();
     }

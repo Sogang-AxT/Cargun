@@ -21,7 +21,7 @@ public class GamePhaseStateCombat : MonoBehaviour, IGamePhaseState {
         // TODO: 전투 단계 진입 시 수행할 작업 구현; 이벤트 호출 방식
         ShipStationManager.OnStationMoveOut.Invoke();           // Station Move Out
         CargunShipManager.OnTurretActivate.Invoke(true);        // Turret ON
-        EnemySpawnManager.OnEnemySpawnActivate.Invoke(true);    // Enemy Spawn ON
+        EnemyManager.OnEnemySpawnActivate.Invoke(true);    // Enemy Spawn ON
         
         Execute();
     }

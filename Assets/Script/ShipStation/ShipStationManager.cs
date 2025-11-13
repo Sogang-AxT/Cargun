@@ -3,8 +3,8 @@ using System.Collections;
 using UnityEngine.Events;
 
 public class ShipStationManager : MonoBehaviour {
-    public static UnityEvent OnStationMoveIn;
-    public static UnityEvent OnStationMoveOut;
+    public static UnityEvent OnStationMoveIn = new();
+    public static UnityEvent OnStationMoveOut = new();
     
     [SerializeField] private float moveOutDuration;   // 5f
     [SerializeField] private float moveInDuration;    // 5f
