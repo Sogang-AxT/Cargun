@@ -3,6 +3,7 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour {
     public static UnityEvent OnPlayerJoin = new();
+    public static UnityEvent OnGameOver = new();
     
     private GamePhaseStateManager _gamePhaseStateManager;
     private IGamePhaseState _nextGameState; // null

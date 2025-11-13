@@ -4,8 +4,9 @@ using UnityEngine;
 public class EnemyData : ScriptableObject {
     public GC_EnumManager.ENEMY_TYPE enemyType;
     
-    public float moveSpeed;
+    public float speed;
     public float hp;
+    public float dmg;
 
     public float zigzagAmplitude;
     public float zigzagFrequency;

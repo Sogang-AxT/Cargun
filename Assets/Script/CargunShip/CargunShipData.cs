@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CargunShipData : ScriptableObject {
-    public int hp;
-    public int upgradeLevel;
+public class CargunShipData : MonoBehaviour {
+    public float ShipHp { get; private set; }
+    public int UpgradeLevel { get; private set; }
 }

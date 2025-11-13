@@ -1,8 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
+// 함선 터릿 제어
 public class CargunShipTurretController : MonoBehaviour {
-    private CargunShipManager _cargunShipManager;
+    // private CargunShipManager _cargunShipManager;
     
     private float _fireAngle;
     private float _fireRate; 
@@ -25,14 +26,15 @@ public class CargunShipTurretController : MonoBehaviour {
     }
     
     private void TurretActivate(bool isActivate) {
-        if (isActivate) {
-            // TODO: 터릿 발사 구현
-            StartCoroutine(TurretFire());
+        if (!isActivate) {
+            return;
         }
+        
+        StartCoroutine(TurretFire());
     }
 
     private IEnumerator TurretFire() {
-        
+        // TODO: 터릿 발사 구현
         yield return new WaitForSeconds(this._fireRate);
     }
     
