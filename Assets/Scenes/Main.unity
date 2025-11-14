@@ -560,7 +560,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76139d77350bbb642903314337abcaf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Base
-  BaseObject: {fileID: 122095200}
   moveOutDuration: 5
   moveInDuration: 5
 --- !u!1 &133208998
@@ -1684,14 +1683,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 377cf8c6a39e0e746b390f95d020a6d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  currentPhase: ready
-  currentWave: 1
-  maxWave: 10
-  readyTimer: 30
-  combatTimer: 90
-  minPlayersToStart: 1
-  isBaseMoving: 0
-  remainingCargo: 4
 --- !u!4 &584861285
 Transform:
   m_ObjectHideFlags: 0
@@ -2320,6 +2311,7 @@ GameObject:
   - component: {fileID: 903211886}
   - component: {fileID: 903211885}
   - component: {fileID: 903211887}
+  - component: {fileID: 903211888}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Untagged
@@ -2415,28 +2407,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 903211884}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ffc884d4f808b4dabdc9f9a50eec00, type: 3}
+  m_Script: {fileID: 11500000, guid: 48ddf8d3ab974e078a0b18fac791a057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Turret
-  Bullet: {fileID: 304552219121113138, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
-  PivotA: {fileID: 1820582203}
-  PivotB: {fileID: 143452649}
-  PivotC: {fileID: 1233848212}
-  PivotD: {fileID: 66117201}
-  TurretA: {fileID: 1878808881}
-  TurretB: {fileID: 422243073}
-  TurretC: {fileID: 283198518}
-  TurretD: {fileID: 1181882757}
-  AngleA: {fileID: 2017778520}
-  AngleB: {fileID: 2127326406}
-  AngleC: {fileID: 4874271}
-  AngleD: {fileID: 822665145}
-  Dis: {fileID: 2178067103237755332, guid: de4f8f1ef43fc754c9a2318065f58556, type: 3}
-  Green: {fileID: -5140063255916471118, guid: d418fa63649ca5f458c00bc99c9229ef, type: 3}
-  Blue: {fileID: -2710734387536562027, guid: f231de4657f076a4a9718f6061502d5c, type: 3}
-  Purple: {fileID: 640347656591243945, guid: 218c29ef327fb71468c49d94109c5d5e, type: 3}
-  Orange: {fileID: -4674643322959421250, guid: 78652de59be1f0640b65f0a8989a6184, type: 3}
-  fireRate: 0.5
+  shipData: {fileID: 903211888}
+--- !u!114 &903211888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903211884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05380dde18a74caf8d71c7113b1aeb6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CargunShipData
+  hp: 5
+  upgradeLevel: 0
 --- !u!1 &922990679
 GameObject:
   m_ObjectHideFlags: 0
@@ -4115,16 +4103,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1733622104}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1a1c3d2bc676bc42a7a315656648f35, type: 3}
+  m_Script: {fileID: 11500000, guid: a2cea867855d46768c2105cf473f81e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  EnemyObject: {fileID: 4982208938575328642, guid: cc222e615565fac4a8752743fd38af8c, type: 3}
-  spawnInterval: 2
-  maxEnemies: 10
-  leftSpawnRange: {x: -10, y: -5}
-  rightSpawnRange: {x: 10, y: -5}
-  spawnYMin: -5
-  spawnYMax: 5
 --- !u!4 &1733622106
 Transform:
   m_ObjectHideFlags: 0
@@ -4430,15 +4411,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1798212445}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce1ebd9bb68a36347a63dca01f963d97, type: 3}
+  m_Script: {fileID: 11500000, guid: 76139d77350bbb642903314337abcaf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cargo
-  CargoHitBox: {fileID: 588525291}
-  CargoObject:
-  - {fileID: 1744834640}
-  - {fileID: 308309985}
-  - {fileID: 1360756922}
-  - {fileID: 133208998}
+  moveOutDuration: 3
+  moveInDuration: 3
 --- !u!1 &1820582203
 GameObject:
   m_ObjectHideFlags: 0
@@ -4448,6 +4425,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1820582204}
+  - component: {fileID: 1820582205}
   m_Layer: 0
   m_Name: TurretA_Pivot
   m_TagString: Untagged
@@ -4471,6 +4449,20 @@ Transform:
   - {fileID: 1878808880}
   m_Father: {fileID: 903211886}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
+--- !u!114 &1820582205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1820582203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd7a144090a14a829de06ef5b9e7e742, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CargunShipTurretController
+  turretType: 0
+  turretMuzzle: {fileID: 1820582204}
 --- !u!1 &1856826741
 GameObject:
   m_ObjectHideFlags: 0
@@ -4516,20 +4508,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68d0a22696a7dee48b865e6d32ab8948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interface
-  QRCode: {fileID: 431952855}
-  ReadyPhase: {fileID: 1883507849}
-  Timer_Ready: {fileID: 2045916030}
-  PlayerNum_Ready: {fileID: 286063865}
-  Wave_Ready: {fileID: 477454750}
-  PlayerName_Ready:
-  - {fileID: 1420143865}
-  - {fileID: 1727270886}
-  - {fileID: 944682617}
-  - {fileID: 1185833541}
-  CombatPhase: {fileID: 726729740}
-  Wave_Combat: {fileID: 1054520268}
-  CargoNum_Combat: {fileID: 446443197}
-  Timer_Combat: {fileID: 615796334}
 --- !u!114 &1856826744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4542,8 +4520,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f32a4893c03d78d498945bdafc316c29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeInfo
-  InfoPanel: {fileID: 1357107288}
-  InfoText: {fileID: 459819671}
 --- !u!1 &1866586445
 GameObject:
   m_ObjectHideFlags: 0
@@ -4822,8 +4798,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2544a5ec096207e46b0a277aa7df8e6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Server
-  serverURL: https://mgtul.duckdns.org
-  playerCount: 0
 --- !u!114 &1955071819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4833,10 +4807,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1955071816}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 990b0fcf02a0ea54d8c3406abc4f5590, type: 3}
+  m_Script: {fileID: 11500000, guid: db706a978e77e42b7858ab0b042a24f3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Cheat
-  goldAmount: 1000
+  m_EditorClassIdentifier: Assembly-CSharp::ServerDataManager
 --- !u!1 &1974254469
 GameObject:
   m_ObjectHideFlags: 0

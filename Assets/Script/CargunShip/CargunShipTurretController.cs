@@ -64,8 +64,9 @@ public class CargunShipTurretController : MonoBehaviour {
     }
 
     private IEnumerator TurretFire() {
-        while (true) {
-            var bullet = this._bulletPool.Get(); // TODO: 총알이 생성되면 발사
+        while (ServerDataManager.Turret_Shoot[(int)this.turretType]) {
+            Debug.Log("SHOOT!");
+            // var bullet = this._bulletPool.Get(); // TODO: 총알이 생성되면 발사
             yield return new WaitForSeconds(this._fireRate);
         }
     }
