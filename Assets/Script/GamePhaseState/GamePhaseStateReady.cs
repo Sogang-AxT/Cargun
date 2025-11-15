@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class GamePhaseStateReady : MonoBehaviour, IGamePhaseState {
+public class GamePhaseStateReady : IGamePhaseState {
     private readonly GC_EnumManager.GAMEPHASE _gamePhase;
     
     private GamePhaseStateManager _gamePhaseStateManager;
@@ -28,7 +28,7 @@ public class GamePhaseStateReady : MonoBehaviour, IGamePhaseState {
 
     public void Execute() {
         // TODO: 준비 단계에서 수행할 작업 구현;
-        StartCoroutine(ReadyPhase());
+        this._gamePhaseStateManager.Owner.StartCoroutine(ReadyPhase());
     }
 
     public void Exit() {

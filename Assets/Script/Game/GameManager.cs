@@ -13,7 +13,9 @@ public class GameManager : MonoBehaviour {
     
     
     private void Init() {
-        this._gamePhaseStateManager = new GamePhaseStateManager(this._gamePhaseStateManager);
+        OnPlayerJoin.AddListener(PlayerJoin);
+
+        this._gamePhaseStateManager = new GamePhaseStateManager(this);
         this._nextGameState = null;
         this._isPlayerCountValid = false;
         this._isBaseMoving = false;
@@ -26,19 +28,27 @@ public class GameManager : MonoBehaviour {
 
     private void Update() {
         // 플레이어 수가 충분한가?
-        if (GameData.Instance.CurrentPlayer < GameData.Instance.MinPlayer) {
+        if (GameData.Instance.CurrentPlayerCount < GameData.Instance.MinPlayer) {
+            Debug.Log("GameManager; player num");
             return;
         }
         
         // 마지막 웨이브 달성?
         if (GameData.Instance.CurrentWave >= GameData.Instance.MaxWave) { 
+            Debug.Log("GameManger; wave fin");
             GameEndingPhase();
             return;
         }
-
+        
+        // Debug.Log("GameManager; Update()");
         GamePhaseUpdate();
     }
 
+    private void PlayerJoin() {
+        GameData.Instance.CurrentPlayerCount = ServerDataManager.TotalPlayer;
+        // TODO: 플레이어 접속 관련 처리
+    }
+    
     private void GamePhaseUpdate() {
         if (!this._isPhaseRunning) {
             this._isPhaseRunning = true;
@@ -46,18 +56,25 @@ public class GameManager : MonoBehaviour {
             // 초기값 = COMBAT
             var currentGamePhase = this._gamePhaseStateManager.CurrentGamePhase;
             
-            // 전투 페이스일 때만 웨이브 값 증가
-            if (currentGamePhase == GC_EnumManager.GAMEPHASE.COMBAT) {
-                GameData.Instance.CurrentWave += 1; // TODO: 비용 문제 해결
-            }
+            // TODO: 코루틴을 잘못 사용함; 전투 페이스 진입 시, 1프레임 단위로 계속 증가 중
+            // if (currentGamePhase == GC_EnumManager.GAMEPHASE.COMBAT) {
+            //     GameData.Instance.CurrentWave += 1; // TODO: 비용 문제 해결
+            // }
             
             // COMBAT -> (NEXT) READY; READY -> (NEXT) COMBAT
             this._nextGameState = (currentGamePhase == GC_EnumManager.GAMEPHASE.COMBAT) ? 
                 this._gamePhaseStateManager.GamePhaseStateReady : this._gamePhaseStateManager.GamePhaseStateCombat;
             this._gamePhaseStateManager.TransitionTo(this._nextGameState);
+            
+            Debug.Log("GameState: " + this._nextGameState);
         }
-
-        this._isPhaseRunning = false;
+        
+        // TODO: 코루틴을 잘못 사용함; 코루틴 호출 명령만 내린 후, 바로 복귀
+        if (Input.GetKeyDown(KeyCode.C)) {
+            this._isPhaseRunning = false; 
+        }
+        
+        // this._isPhaseRunning = false;
     }
 
     private void GameEndingPhase() {

@@ -55,18 +55,28 @@ public class CargunShipTurretController : MonoBehaviour {
     }
     
     private void TurretActivate(bool isActivate) {
+        Debug.Log("isActivate: " + isActivate);
+        
         if (!isActivate) {
+            Debug.Log("Stop TurretFire");
             StopCoroutine(TurretFire());
             return;
         }
+        
         
         StartCoroutine(TurretFire());
     }
 
     private IEnumerator TurretFire() {
-        while (ServerDataManager.Turret_Shoot[(int)this.turretType]) {
-            Debug.Log("SHOOT!");
-            // var bullet = this._bulletPool.Get(); // TODO: 총알이 생성되면 발사
+        while (true) {
+            Debug.Log("Turret Shoot: " + ServerDataManager.Turret_Shoot[(int)this.turretType]);
+
+            // 조이스틱 사용 감지 처리; !! while 조건문으로 기입하면 코루틴 탈출 시, 복귀 불가
+            if (ServerDataManager.Turret_Shoot[(int)this.turretType]) {
+                Debug.Log("SHOOT!");    // TODO: 총알이 생성되면 발사
+                // var bullet = this._bulletPool.Get(); 
+            }
+            
             yield return new WaitForSeconds(this._fireRate);
         }
     }

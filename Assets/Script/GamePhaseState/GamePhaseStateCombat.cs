@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class GamePhaseStateCombat : MonoBehaviour, IGamePhaseState {
+public class GamePhaseStateCombat : IGamePhaseState {
     private readonly GC_EnumManager.GAMEPHASE _gamePhase;
     
     private GamePhaseStateManager _gamePhaseStateManager;
@@ -28,7 +28,7 @@ public class GamePhaseStateCombat : MonoBehaviour, IGamePhaseState {
 
     public void Execute() {
         // TODO: 전투 단계에서 수행할 작업 구현;
-        StartCoroutine(CombatPhase());
+        this._gamePhaseStateManager.Owner.StartCoroutine(CombatPhase());
     }
 
     public void Exit() {
