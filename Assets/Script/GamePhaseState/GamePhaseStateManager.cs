@@ -10,12 +10,13 @@ public class GamePhaseStateManager {
     public GamePhaseStateCombat GamePhaseStateCombat { get; }
     public GamePhaseStateEnding GamePhaseStateEnding { get; }
     
-    public int ReadyPhaseTimer { get; private set; } = 30;
-    public int CombatPhaseTimer { get; private set; } = 90;
+    public bool IsGameOver { get; private set; } = false;
+    public bool IsPhaseRunning { get; set; } = false;
     
     
     public GamePhaseStateManager(MonoBehaviour owner) {
         this.Owner = owner;
+        GameManager.OnGameOver.AddListener(() => this.IsGameOver = true);
         
         this.GamePhaseStateReady = new (this);
         this.GamePhaseStateCombat = new (this);
