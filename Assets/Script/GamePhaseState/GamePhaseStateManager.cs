@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 public class GamePhaseStateManager {
+    public MonoBehaviour Owner { get; }
     public IGamePhaseState CurrentGamePhaseState { get; private set; }
     public GC_EnumManager.GAMEPHASE CurrentGamePhase { get; private set; }
     
@@ -9,14 +10,17 @@ public class GamePhaseStateManager {
     public GamePhaseStateCombat GamePhaseStateCombat { get; }
     public GamePhaseStateEnding GamePhaseStateEnding { get; }
     
-    public int ReadyPhaseTimer { get; private set; } = 30;
-    public int CombatPhaseTimer { get; private set; } = 90;
+    public bool IsGameOver { get; private set; } = false;
+    public bool IsPhaseRunning { get; set; } = false;
     
     
-    public GamePhaseStateManager(GamePhaseStateManager manager) {
-        this.GamePhaseStateReady = new (manager);
-        this.GamePhaseStateCombat = new (manager);
-        this.GamePhaseStateEnding = new (manager);
+    public GamePhaseStateManager(MonoBehaviour owner) {
+        this.Owner = owner;
+        GameManager.OnGameOver.AddListener(() => this.IsGameOver = true);
+        
+        this.GamePhaseStateReady = new (this);
+        this.GamePhaseStateCombat = new (this);
+        this.GamePhaseStateEnding = new (this);
         
         this.CurrentGamePhaseState = this.GamePhaseStateCombat;
         this.CurrentGamePhase = GC_EnumManager.GAMEPHASE.COMBAT;

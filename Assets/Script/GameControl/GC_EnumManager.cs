@@ -25,4 +25,11 @@ public static class GC_EnumManager {
         BOMB,
         SPLIT,
     }
+    
+    public enum TURRET_TYPE {
+        A,
+        B,
+        C,
+        D
+    }
 }
