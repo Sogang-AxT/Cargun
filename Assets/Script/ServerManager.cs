@@ -12,9 +12,6 @@ using Newtonsoft.Json.Linq;
 public class ServerGameData
 {
     public int totalPlayer;
-    public int shipShield;
-    public int shipAttack;
-    public int[] startItem;
     public float[] turretRotation;
     public bool[] turretShoot;
     public int[] turretPlayer;
@@ -50,8 +47,6 @@ public class ServerManager : MonoBehaviour
         _queueLock = new object();
 #endif
 
-        // ✅ ServerDataManager 배열 초기화
-        ServerDataManager.Start_Item = new int[6];
         ServerDataManager.Turret_Rotation = new float[4];
         ServerDataManager.Turret_Shoot = new bool[4];
         ServerDataManager.Turret_Player = new int[4];
@@ -123,14 +118,6 @@ public class ServerManager : MonoBehaviour
                     var jObjectData = JObject.Parse(rawJson);
 
                     ServerDataManager.TotalPlayer = jObjectData["totalPlayer"]?.ToObject<int>() ?? 0;
-                    ServerDataManager.Ship_Shield = jObjectData["shipShield"]?.ToObject<int>() ?? 0;
-                    ServerDataManager.Ship_Attack = jObjectData["shipAttack"]?.ToObject<int>() ?? 0;
-
-                    var startItemArray = jObjectData["startItem"]?.ToObject<int[]>();
-                    if (startItemArray != null && startItemArray.Length == 6)
-                    {
-                        ServerDataManager.Start_Item = startItemArray;
-                    }
 
                     var turretRotationArray = jObjectData["turretRotation"]?.ToObject<float[]>();
                     if (turretRotationArray != null && turretRotationArray.Length == 4)
@@ -150,8 +137,7 @@ public class ServerManager : MonoBehaviour
                         ServerDataManager.Turret_Player = turretPlayerArray;
                     }
 
-                    Debug.Log($"[GameData] TotalPlayer: {ServerDataManager.TotalPlayer}, " +
-                             $"Shield: {ServerDataManager.Ship_Shield}, Attack: {ServerDataManager.Ship_Attack}");
+                    Debug.Log($"[GameData] TotalPlayer: {ServerDataManager.TotalPlayer}");
                 }
                 catch (System.Exception ex)
                 {
@@ -244,18 +230,6 @@ public class ServerManager : MonoBehaviour
             ServerDataManager.TotalPlayer = data.ContainsKey("totalPlayer") ? 
                 System.Convert.ToInt32(data["totalPlayer"]) : 0;
 
-            ServerDataManager.Ship_Shield = data.ContainsKey("shipShield") ? 
-                System.Convert.ToInt32(data["shipShield"]) : 0;
-            ServerDataManager.Ship_Attack = data.ContainsKey("shipAttack") ? 
-                System.Convert.ToInt32(data["shipAttack"]) : 0;
-
-            if (data.ContainsKey("startItem") && data["startItem"] is List<object> startItemList) {
-                ServerDataManager.Start_Item = new int[6];
-                for (int i = 0; i < System.Math.Min(startItemList.Count, 6); i++) {
-                    ServerDataManager.Start_Item[i] = System.Convert.ToInt32(startItemList[i]);
-                }
-            }
-
             if (data.ContainsKey("turretRotation") && data["turretRotation"] is List<object> turretRotationList) {
                 ServerDataManager.Turret_Rotation = new float[4];
                 for (int i = 0; i < System.Math.Min(turretRotationList.Count, 4); i++) {
@@ -277,8 +251,7 @@ public class ServerManager : MonoBehaviour
                 }
             }
 
-            Debug.Log($"[GameData] TotalPlayer: {ServerDataManager.TotalPlayer}, " +
-                     $"Shield: {ServerDataManager.Ship_Shield}, Attack: {ServerDataManager.Ship_Attack}");
+            Debug.Log($"[GameData] TotalPlayer: {ServerDataManager.TotalPlayer}");
         }
         catch (System.Exception ex) {
             Debug.LogError("[Error] WebGL Game Data Parsing Error: " + ex.Message);
