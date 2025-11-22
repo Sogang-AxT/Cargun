@@ -81,7 +81,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: -7084600296794557387, guid: 5eaf83e895d98a6469647abc8aadaca8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -175,9 +175,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4982208938575328642}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 423fb15422cce8d42a5e6245917dc400, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b38157c0cf1ba948949593e99eae085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyUnit
-  moveSpeed: 0.5
-  zigzagAmplitude: 3
-  zigzagFrequency: 3
+  HP: 10
+  Size: 0.1
+  maxSpeed: 3
+  accelerationTime: 0.1
+  decelerationTime: 0.5
+  pauseDuration: 0

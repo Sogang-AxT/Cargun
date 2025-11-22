@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d418fa63649ca5f458c00bc99c9229ef
+guid: 097620cb10ecdeb49b7fe8fdd7e19f2f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5140063255916471118
-    second: Turret_Green_0
+      213: 1176573683838755438
+    second: Turret_Green 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Turret_Green_0
+      name: Turret_Green 1_0
       rect:
         serializedVersion: 2
-        x: 242
-        y: 52
-        width: 540
-        height: 922
+        x: 0
+        y: 0
+        width: 500
+        height: 796
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2bc9f04b3b3daa8b0800000000000000
-      internalID: -5140063255916471118
+      spriteID: e62284d1887045010800000000000000
+      internalID: 1176573683838755438
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Turret_Green_0: -5140063255916471118
+      Turret_Green 1_0: 1176573683838755438
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

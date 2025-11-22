@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: de4f8f1ef43fc754c9a2318065f58556
+guid: 35f2357859820f94d9d7d02df60ba702
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2178067103237755332
-    second: Turret_Disconnect_0
+      213: 4179118965172094697
+    second: CargunShip_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Turret_Disconnect_0
+      name: CargunShip_0
       rect:
         serializedVersion: 2
-        x: 242
-        y: 52
-        width: 540
-        height: 922
+        x: 17
+        y: 11
+        width: 1218
+        height: 387
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4c153719d7c0a3e10800000000000000
-      internalID: 2178067103237755332
+      spriteID: 9e64e219e863ff930800000000000000
+      internalID: 4179118965172094697
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Turret_Disconnect_0: 2178067103237755332
+      CargunShip_0: 4179118965172094697
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
