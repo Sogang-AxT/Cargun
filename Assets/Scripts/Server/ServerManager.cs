@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Runtime.InteropServices;
+using UnityEngine.Events;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
 using SocketIOClient;
@@ -17,8 +18,8 @@ public class ServerGameData
     public int[] turretPlayer;
 }
 
-public class ServerManager : MonoBehaviour
-{
+public class ServerManager : MonoBehaviour {
+    public static UnityEvent<GC_EnumManager.GAMEPHASE> OnBroadcastPhaseChange = new();
     private readonly string _serverURL = "https://mgtul.duckdns.org";
 
     private bool _isConnected;
@@ -40,6 +41,7 @@ public class ServerManager : MonoBehaviour
 
     private void Awake()
     {
+        OnBroadcastPhaseChange.AddListener(BroadcastPhaseChange);
         _isConnected = false;
 
 #if UNITY_EDITOR
@@ -137,7 +139,8 @@ public class ServerManager : MonoBehaviour
                         ServerDataManager.Turret_Player = turretPlayerArray;
                     }
 
-                    Debug.Log($"[GameData] TotalPlayer: {ServerDataManager.TotalPlayer}");
+                    // Debug.Log($"[GameData] TotalPlayer: {ServerDataManager.TotalPlayer}");
+                    // TODO: 조이스틱 입력
                 }
                 catch (System.Exception ex)
                 {
@@ -164,6 +167,9 @@ public class ServerManager : MonoBehaviour
 
                     var data = JObject.Parse(rawJsonPlayerList);
                     Debug.Log($"[PlayerList] 플레이어 수: {data.Count}");
+                    
+                    // TODO: 플레이어 로그인; TotalPlayer 갱신하도록 수정해야
+                    GameManager.OnPlayerJoin.Invoke(data.Count);
                 }
                 catch (System.Exception ex)
                 {
@@ -480,8 +486,9 @@ public class ServerManager : MonoBehaviour
 
     // ==================== 공통 코드 ====================
 
-    public void BroadcastPhaseChange(string phase)
+    public void BroadcastPhaseChange(GC_EnumManager.GAMEPHASE phaseType)
     {
+        var phase = phaseType.ToString().ToLower();
 #if UNITY_WEBGL && !UNITY_EDITOR
         EmitToServer("phaseChange", $"\"{phase}\"");
         Debug.Log($"[BroadcastPhase] Phase 전송: {phase} (WebGL)");

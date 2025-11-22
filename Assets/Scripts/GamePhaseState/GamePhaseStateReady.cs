@@ -9,9 +9,9 @@ public class GamePhaseStateReady : IGamePhaseState {
 
     
     public GamePhaseStateReady(GamePhaseStateManager manager) {
-        this._gamePhase = GC_EnumManager.GAMEPHASE.READY;
+        this._gamePhase = GC_EnumManager.GAMEPHASE.PREPARE;
         this._gamePhaseStateManager = manager;
-        this._phaseTimer = 30;
+        this._phaseTimer = 1;
     }
 
     public void Enter() {
@@ -32,15 +32,16 @@ public class GamePhaseStateReady : IGamePhaseState {
 
     public void Exit() {
         // TODO: 준비 단계 탈출 시 수행할 작업 구현;
-        this._phaseTimer = 30;
+        this._phaseTimer = 1;
     }
     
     private IEnumerator ReadyPhase() {
         this._gamePhaseStateManager.IsPhaseRunning = true;
-
+        
         while (this._phaseTimer > 0) {
             this._phaseTimer -= 1;
-            // TODO: 준비 단계에서 수행할 작업 구현;
+            // Debug.Log("Ready: " + this._phaseTimer);
+            
             yield return new WaitForSeconds(1f);
         }
 

@@ -8,14 +8,13 @@ public class GamePhaseStateCombat : IGamePhaseState {
 
     
     public GamePhaseStateCombat(GamePhaseStateManager manager) {
-        this._gamePhase = GC_EnumManager.GAMEPHASE.COMBAT;
+        this._gamePhase = GC_EnumManager.GAMEPHASE.BATTLE;
         this._gamePhaseStateManager = manager;
     }
 
     public void Enter() {
         this._gamePhaseStateManager.SetGamePhase(this._gamePhase);            // ENUM 설정; 외부 판별용
         
-        // TODO: 전투 단계 진입 시 수행할 작업 구현;
         ShipStationManager.OnStationMoveOut.Invoke();           // Station Move Out
         CargunShipManager.OnTurretActivate.Invoke(true);        // Turret ON
         EnemyManager.OnEnemySpawnActivate.Invoke(true);         // Enemy Spawn ON
@@ -24,19 +23,23 @@ public class GamePhaseStateCombat : IGamePhaseState {
     }
 
     public void Execute() {
-        this._gamePhaseStateManager.IsPhaseRunning = true;
-
-        while (true) {
-            if (this._gamePhaseStateManager.IsGameOver) {
-                return;
-            }
-            // TODO: 전투 단계에서 수행할 작업 구현;
+        if (this._gamePhaseStateManager.IsGameOver) {
+            this._gamePhaseStateManager.IsPhaseRunning = false;
+            return;
         }
         
-        this._gamePhaseStateManager.IsPhaseRunning = false;
+        this._gamePhaseStateManager.IsPhaseRunning = true;
+
+        // TODO: 비용 문제 발생 중
+        if ((GameData.Instance.CurrentScore % GameData.Instance.LevelUpScoreStep) == 0 
+            && GameData.Instance.CurrentScore >= 500) {
+            GameData.Instance.CurrentLevel += 1;
+        }
     }
 
     public void Exit() {
         // TODO: 전투 단계 탈출 시 수행할 작업 구현;
+        CargunShipManager.OnTurretActivate.Invoke(false);        // Turret OFF
+        EnemyManager.OnEnemySpawnActivate.Invoke(false);         // Enemy Spawn OFF
     }
 }

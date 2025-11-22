@@ -23,7 +23,7 @@ public class GamePhaseStateManager {
         this.GamePhaseStateEnding = new (this);
         
         this.CurrentGamePhaseState = this.GamePhaseStateCombat;
-        this.CurrentGamePhase = GC_EnumManager.GAMEPHASE.COMBAT;
+        this.CurrentGamePhase = GC_EnumManager.GAMEPHASE.BATTLE;
     }
     
     public void TransitionTo(IGamePhaseState nextState) {
@@ -34,6 +34,9 @@ public class GamePhaseStateManager {
 
     public void SetGamePhase(GC_EnumManager.GAMEPHASE phase) {
         this.CurrentGamePhase = phase;
+        // Debug.Log("SetGamePhase: " + phase);
+        ServerManager.OnBroadcastPhaseChange.Invoke(phase);
+        
         // ServerManager.OnGamePhaseChange.Invoke(phase);
     }
 }

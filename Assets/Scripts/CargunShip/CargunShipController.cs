@@ -18,9 +18,10 @@ public class CargunShipController : MonoBehaviour {
     }
 
     private void CargunShipReturnToStation() {
-        if (this.shipData.hp <= 0f) {
-            GameManager.OnGameOver.Invoke();    // TODO: Game Over
+        if (this.shipData.hp > 0f) {
             return;
         }
+        
+        GameManager.OnGameOver.Invoke();    // TODO: Game Over
     }
 }

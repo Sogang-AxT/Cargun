@@ -1,7 +1,7 @@
 public static class GC_EnumManager {
     public enum GAMEPHASE {
-        READY,
-        COMBAT,
+        PREPARE,
+        BATTLE,
         ENDING
     }
 

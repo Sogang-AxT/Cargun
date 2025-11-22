@@ -19,8 +19,8 @@ public class ShipStationManager : MonoBehaviour {
         this._shipStationObject = this.gameObject;
         
         this._startPosition = new Vector3(0, 0, 0);
-        this._inPosition = new Vector3(0, 30, 0);
-        this._outPosition = new Vector3(0, -30, 0);
+        this._inPosition = new Vector3(30, 0, 0);
+        this._outPosition = new Vector3(-30, 0, 0);
         
         OnStationMoveIn.AddListener(MoveIn);
         OnStationMoveOut.AddListener(MoveOut);
