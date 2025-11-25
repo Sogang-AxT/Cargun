@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GC_SingletonImplementer<T> : MonoBehaviour where T : Component {
+public class GCSingletonImplementer<T> : MonoBehaviour where T : Component {
     private static T instance;
     public static T Instance {
         get {

@@ -1,24 +1,23 @@
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
-    private readonly string _bulletTag = "bullet";
+    // TODO: 하나로 묶어서 관리
+    private readonly string _bulletTag = "Bullet";
+    private readonly string _shipTag = "Player";
     
     [SerializeField] private EnemyData enemyData;
     [SerializeField] private Transform targetTransform;
 
-    // private GC_EnumManager.ENEMY_TYPE _enemyType;
-    // private float _enemyHp;
-    // private float _enemyDmg;
-    // private float _moveSpeed;
-    
+    private GCEnumManager.ENEMY_TYPE _enemyType;
     private Vector3 _targetDir;
-
+    private float _currentHp;
+    private float _currentSpeed;
+    
     
     private void Init() {
-        // this._enemyType = this.enemyData.enemyType;
-        // this._enemyHp = this.enemyData.hp;
-        // this._enemyDmg = this.enemyData.dmg;
-        // this._moveSpeed = this.enemyData.moveSpeed;
+        this._enemyType = this.enemyData.enemyType;
+        this._currentHp = this.enemyData.hp;
+        this._currentSpeed = this.enemyData.speed;
     }
 
     private void Awake() {
@@ -30,7 +29,12 @@ public class EnemyController : MonoBehaviour {
             var bullet = other.gameObject.GetComponent<Bullet>();
             var bulletDmg = bullet.Dmg;
 
-            this.enemyData.hp -= bulletDmg;
+            this._currentHp -= bulletDmg;
+            EnemyReturnToPool();
+        }
+        else if (other.gameObject.CompareTag(this._shipTag)) {
+            // TODO: 함선 공격
+            this._currentHp = 0;
             EnemyReturnToPool();
         }
     }
@@ -41,13 +45,13 @@ public class EnemyController : MonoBehaviour {
 
     private void MoveToShip() {
         this._targetDir = (this.targetTransform.position - this.gameObject.transform.position).normalized;
-        // TODO: Zig-Zag
-        this.gameObject.transform.position += this._targetDir * (this.enemyData.speed * Time.deltaTime);
+        this.gameObject.transform.position += this._targetDir * (this._currentSpeed * Time.deltaTime);
     }
 
     private void EnemyReturnToPool() {
-        if (this.enemyData.hp <= 0f) {
+        if (this._currentHp <= 0f) {
             // TODO: ENEMY KILLED
+            Destroy(this.gameObject);
             return;
         }
     }

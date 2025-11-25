@@ -2,14 +2,14 @@ using System.Collections;
 using UnityEngine;
 
 public class GamePhaseStateReady : IGamePhaseState {
-    private readonly GC_EnumManager.GAMEPHASE _gamePhase;
+    private readonly GCEnumManager.GAMEPHASE _gamePhase;
     
     private GamePhaseStateManager _gamePhaseStateManager;
     private int _phaseTimer;
 
     
     public GamePhaseStateReady(GamePhaseStateManager manager) {
-        this._gamePhase = GC_EnumManager.GAMEPHASE.PREPARE;
+        this._gamePhase = GCEnumManager.GAMEPHASE.PREPARE;
         this._gamePhaseStateManager = manager;
         this._phaseTimer = 1;
     }

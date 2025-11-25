@@ -4,7 +4,7 @@ using UnityEngine;
 public class GamePhaseStateManager {
     public MonoBehaviour Owner { get; }
     public IGamePhaseState CurrentGamePhaseState { get; private set; }
-    public GC_EnumManager.GAMEPHASE CurrentGamePhase { get; private set; }
+    public GCEnumManager.GAMEPHASE CurrentGamePhase { get; private set; }
     
     public GamePhaseStateReady GamePhaseStateReady { get; }
     public GamePhaseStateCombat GamePhaseStateCombat { get; }
@@ -23,7 +23,7 @@ public class GamePhaseStateManager {
         this.GamePhaseStateEnding = new (this);
         
         this.CurrentGamePhaseState = this.GamePhaseStateCombat;
-        this.CurrentGamePhase = GC_EnumManager.GAMEPHASE.BATTLE;
+        this.CurrentGamePhase = GCEnumManager.GAMEPHASE.BATTLE;
     }
     
     public void TransitionTo(IGamePhaseState nextState) {
@@ -32,7 +32,7 @@ public class GamePhaseStateManager {
         this.CurrentGamePhaseState?.Enter();
     }
 
-    public void SetGamePhase(GC_EnumManager.GAMEPHASE phase) {
+    public void SetGamePhase(GCEnumManager.GAMEPHASE phase) {
         this.CurrentGamePhase = phase;
         // Debug.Log("SetGamePhase: " + phase);
         ServerManager.OnBroadcastPhaseChange.Invoke(phase);

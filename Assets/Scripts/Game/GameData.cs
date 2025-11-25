@@ -1,4 +1,4 @@
-public class GameData : GC_SingletonImplementer<GameData> {
+public class GameData : GCSingletonImplementer<GameData> {
     public int CurrentScore { get; set; }
     public int LevelUpScoreStep { get; private set; } = 500;
 

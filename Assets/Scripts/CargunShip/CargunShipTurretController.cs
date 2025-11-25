@@ -7,7 +7,7 @@ public class CargunShipTurretController : MonoBehaviour {
     [SerializeField] private Sprite offlineTurretSprite;
     [SerializeField] private Sprite onlineTurretSprite;
     [Space(10f)]
-    [SerializeField] private GC_EnumManager.TURRET_TYPE turretType;
+    [SerializeField] private GCEnumManager.TURRET_TYPE turretType;
     [SerializeField] private Transform turretMuzzle;
     
     private Sprite _turretSprite;
@@ -95,11 +95,13 @@ public class CargunShipTurretController : MonoBehaviour {
 
     private IEnumerator TurretFire() {
         while (true) {
-            // Debug.Log(this.turretType + " - " + ServerDataManager.Turret_Shoot[(int)this.turretType]);
-
             // 조이스틱 사용 감지 처리; while 조건문으로 기입하면 코루틴 탈출 시 복귀 불가
             if (ServerDataManager.Turret_Shoot[(int)this.turretType]) {
                 Debug.Log($"{this.turretType} - SHOOT!");    // TODO: 총알 생성, 발사
+                
+                
+                
+                
             }
             
             yield return new WaitForSeconds(this._fireRate);

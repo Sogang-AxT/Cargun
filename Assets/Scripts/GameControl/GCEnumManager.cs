@@ -1,4 +1,4 @@
-public static class GC_EnumManager {
+public static class GCEnumManager {
     public enum GAMEPHASE {
         PREPARE,
         BATTLE,

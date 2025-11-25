@@ -20,12 +20,12 @@ public class ServerDataManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            ServerManager.OnBroadcastPhaseChange.Invoke(GC_EnumManager.GAMEPHASE.PREPARE);
+            ServerManager.OnBroadcastPhaseChange.Invoke(GCEnumManager.GAMEPHASE.PREPARE);
         }
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            ServerManager.OnBroadcastPhaseChange.Invoke(GC_EnumManager.GAMEPHASE.BATTLE);
+            ServerManager.OnBroadcastPhaseChange.Invoke(GCEnumManager.GAMEPHASE.BATTLE);
         }
     }
 }

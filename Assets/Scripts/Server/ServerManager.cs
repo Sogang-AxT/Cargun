@@ -19,7 +19,7 @@ public class ServerGameData
 }
 
 public class ServerManager : MonoBehaviour {
-    public static UnityEvent<GC_EnumManager.GAMEPHASE> OnBroadcastPhaseChange = new();
+    public static UnityEvent<GCEnumManager.GAMEPHASE> OnBroadcastPhaseChange = new();
     private readonly string _serverURL = "https://mgtul.duckdns.org";
 
     private bool _isConnected;
@@ -486,7 +486,7 @@ public class ServerManager : MonoBehaviour {
 
     // ==================== 공통 코드 ====================
 
-    public void BroadcastPhaseChange(GC_EnumManager.GAMEPHASE phaseType)
+    public void BroadcastPhaseChange(GCEnumManager.GAMEPHASE phaseType)
     {
         var phase = phaseType.ToString().ToLower();
 #if UNITY_WEBGL && !UNITY_EDITOR

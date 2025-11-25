@@ -2,13 +2,13 @@ using System.Collections;
 using UnityEngine;
 
 public class GamePhaseStateCombat : IGamePhaseState {
-    private readonly GC_EnumManager.GAMEPHASE _gamePhase;
+    private readonly GCEnumManager.GAMEPHASE _gamePhase;
     
     private GamePhaseStateManager _gamePhaseStateManager;
 
     
     public GamePhaseStateCombat(GamePhaseStateManager manager) {
-        this._gamePhase = GC_EnumManager.GAMEPHASE.BATTLE;
+        this._gamePhase = GCEnumManager.GAMEPHASE.BATTLE;
         this._gamePhaseStateManager = manager;
     }
 
