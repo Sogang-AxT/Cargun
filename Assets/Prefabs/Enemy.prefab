@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 375880925045117086}
   - component: {fileID: 5804668840606928632}
   - component: {fileID: 7314781359335981802}
-  - component: {fileID: 3922338256193714599}
+  - component: {fileID: 8137237987368033971}
   - component: {fileID: 5703097278068361988}
   m_Layer: 0
   m_Name: Enemy
@@ -139,7 +139,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 8.63, y: 7.17}
   m_EdgeRadius: 0
---- !u!50 &3922338256193714599
+--- !u!50 &8137237987368033971
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -154,7 +154,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -179,4 +179,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   enemyData: {fileID: 11400000, guid: c672d8e9c1f474a6f93d07a0cbdf46d7, type: 2}
-  targetTransform: {fileID: 0}
