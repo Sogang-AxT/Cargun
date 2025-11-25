@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: Enemy_Default
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyType: 0
-  speed: 10
+  speed: 3
   hp: 5
   dmg: 5
-  zigzagAmplitude: 0
-  zigzagFrequency: 0

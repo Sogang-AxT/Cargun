@@ -30,7 +30,7 @@ public class EnemyController : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.CompareTag(EnemyManager.BulletTag)) {
-            var bullet = other.gameObject.GetComponent<Bullet>();
+            var bullet = other.gameObject.GetComponent<ProjectileController>();
             var bulletDmg = bullet.Dmg;
 
             this._currentHp -= bulletDmg;

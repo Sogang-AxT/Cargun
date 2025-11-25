@@ -9,12 +9,12 @@ public class EnemySpawnController : MonoBehaviour {
     [SerializeField] private int defaultPoolCapacity;
     [SerializeField] private int maxSize;
     
-    private IObjectPool<EnemyController> enemySpawnPool;
+    private IObjectPool<EnemyController> _enemySpawnPool;
     private float _enemySpawnTime;
     
     
     private void Init() {
-        this.enemySpawnPool = new ObjectPool<EnemyController>(
+        this._enemySpawnPool = new ObjectPool<EnemyController>(
             EnemySpawn, OnGetFromPool, OnReleaseToPool, OnDestroyPooledEnemy, 
             this.collectionCheck, this.defaultPoolCapacity, this.maxSize);
         
@@ -28,7 +28,7 @@ public class EnemySpawnController : MonoBehaviour {
     
     private EnemyController EnemySpawn() {
         var enemyInstance = Instantiate(this.enemyPrefab);
-        enemyInstance.EnemySpawnPool = this.enemySpawnPool;
+        enemyInstance.EnemySpawnPool = this._enemySpawnPool;
 
         return enemyInstance;
     }
@@ -58,7 +58,7 @@ public class EnemySpawnController : MonoBehaviour {
             
             yield return new WaitForSeconds(this._enemySpawnTime);
             
-            var enemy = this.enemySpawnPool.Get();
+            var enemy = this._enemySpawnPool.Get();
 
             if (!enemy) {
                 yield break;

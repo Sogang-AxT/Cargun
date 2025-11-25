@@ -11,13 +11,22 @@ public class CargunShipTurretController : MonoBehaviour {
     [SerializeField] private Transform turretMuzzle;
     
     private Sprite _turretSprite;
-    private IObjectPool<GameObject> _bulletPool;
-    private GameObject _bulletPrefab;
     private Coroutine _turretFireCoroutine;
-    private float _fireRate;
+    private float _fireRate;    // TODO: 스폰 타임으로 접근해야
     private bool _isControlling;
     private bool _isAssigned;
     private int _turretPlayer;
+    
+    [Space(25f)]
+    
+    [Header("Projectile")]
+    [SerializeField] private ProjectileController projectilePrefab;
+    [SerializeField] private bool collectionCheck;
+    [SerializeField] private int defaultPoolCapacity;
+    [SerializeField] private int maxSize;
+    [SerializeField] private float muzzleVelocity;
+    
+    private IObjectPool<ProjectileController> _projectileSpawnPool;
     
     
     private void Init() {
@@ -27,30 +36,12 @@ public class CargunShipTurretController : MonoBehaviour {
         this._turretSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
         this._isAssigned = false;
         this._fireRate = 0.5f;
-        this._bulletPool = new ObjectPool<GameObject>(
-            createFunc: () => {
-                var bullet 
-                    = Instantiate(this._bulletPrefab, this.turretMuzzle.position, this.turretMuzzle.localRotation);
-                
-                return bullet;
-            },
-            actionOnGet: obj => {
-                obj.transform.position = this.turretMuzzle.position;
-                obj.transform.rotation = this.turretMuzzle.rotation;
-                obj.SetActive(true);
-            },
-            actionOnRelease: obj => {
-                obj.SetActive(false);
-                obj.transform.position = this.turretMuzzle.position;
-                obj.transform.rotation = this.turretMuzzle.rotation;
-            },
-            actionOnDestroy: Destroy,
-            collectionCheck: true,
-            defaultCapacity: 50,
-            maxSize: 100
-        );
-    }
 
+        this._projectileSpawnPool = new ObjectPool<ProjectileController>(
+            BulletSpawn, OnGetFromPool, OnReleaseToPool, OnDestroyPooledBullet,
+            this.collectionCheck, this.defaultPoolCapacity, this.maxSize);
+    }
+    
     private void Awake() {
         Init();
     }
@@ -87,6 +78,7 @@ public class CargunShipTurretController : MonoBehaviour {
             
             StopCoroutine(this._turretFireCoroutine);
             this._turretFireCoroutine = null;
+            
             return;
         }
         
@@ -97,14 +89,22 @@ public class CargunShipTurretController : MonoBehaviour {
         while (true) {
             // 조이스틱 사용 감지 처리; while 조건문으로 기입하면 코루틴 탈출 시 복귀 불가
             if (ServerDataManager.Turret_Shoot[(int)this.turretType]) {
-                Debug.Log($"{this.turretType} - SHOOT!");    // TODO: 총알 생성, 발사
+                Debug.Log($"{this.turretType} - SHOOT!");    // TODO: 총알 생성 시 게임이 죽어버림.
+                var projectile = this._projectileSpawnPool.Get();
+
+                if (!projectile) {
+                    break;
+                }
                 
+                projectile.transform.SetPositionAndRotation(this.turretMuzzle.position, this.turretMuzzle.rotation);
+                projectile.GetComponent<Rigidbody>().AddForce(
+                    projectile.transform.forward * this.muzzleVelocity, ForceMode.Acceleration);
                 
-                
-                
+                yield return new WaitForSeconds(this._fireRate);
+
+                // projectile.Deactivate();
+                projectile.ProjectileSpawnPool.Release(projectile);
             }
-            
-            yield return new WaitForSeconds(this._fireRate);
         }
     }
 
@@ -116,5 +116,24 @@ public class CargunShipTurretController : MonoBehaviour {
         this.transform.rotation 
             = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y, 
                 -ServerDataManager.Turret_Rotation[(int)this.turretType]);
+    }
+    
+    private void OnDestroyPooledBullet(ProjectileController obj) {
+        Destroy(obj.gameObject);
+    }
+
+    private void OnReleaseToPool(ProjectileController obj) {
+        obj.gameObject.SetActive(false);
+    }
+
+    private void OnGetFromPool(ProjectileController obj) {
+        obj.gameObject.SetActive(this);
+    }
+
+    private ProjectileController BulletSpawn() {
+        var projectileInstance = Instantiate(this.projectilePrefab);
+        projectileInstance.ProjectileSpawnPool = this._projectileSpawnPool;
+        
+        return projectileInstance;
     }
 }
