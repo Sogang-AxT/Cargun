@@ -100,11 +100,13 @@ public class CargunShipTurretController : MonoBehaviour {
                 projectile.GetComponent<Rigidbody2D>().AddForce(
                     projectile.transform.forward * this.muzzleVelocity, ForceMode2D.Force);
                 
-                // projectile.Deactivate();
-                projectile.ProjectileSpawnPool.Release(projectile);
+                // yield return new WaitForSeconds(this._fireRate);    // TODO: if 문 안으로 이동 금지; 무한루프
+                //
+                // // projectile.Deactivate();
+                // projectile.ProjectileSpawnPool.Release(projectile);
             }
 
-            yield return new WaitForSeconds(this._fireRate);
+            yield return new WaitForSeconds(this._fireRate);    // TODO: if 문 안으로 이동 금지; 무한루프
         }
     }
 
