@@ -782,7 +782,7 @@ MonoBehaviour:
   collectionCheck: 0
   defaultPoolCapacity: 50
   maxSize: 1000
-  muzzleVelocity: 50
+  muzzleVelocity: 5
 --- !u!1 &431952855
 GameObject:
   m_ObjectHideFlags: 0
@@ -1864,7 +1864,7 @@ MonoBehaviour:
   collectionCheck: 0
   defaultPoolCapacity: 50
   maxSize: 1000
-  muzzleVelocity: 50
+  muzzleVelocity: 5
 --- !u!1 &903211884
 GameObject:
   m_ObjectHideFlags: 0
@@ -2504,7 +2504,7 @@ MonoBehaviour:
   collectionCheck: 0
   defaultPoolCapacity: 50
   maxSize: 1000
-  muzzleVelocity: 50
+  muzzleVelocity: 5
 --- !u!1 &973261712
 GameObject:
   m_ObjectHideFlags: 0
@@ -4220,7 +4220,7 @@ MonoBehaviour:
   collectionCheck: 0
   defaultPoolCapacity: 50
   maxSize: 1000
-  muzzleVelocity: 50
+  muzzleVelocity: 5
 --- !u!1 &1883507849
 GameObject:
   m_ObjectHideFlags: 0

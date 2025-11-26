@@ -12,7 +12,6 @@ public class CargunShipTurretController : MonoBehaviour {
     
     private Sprite _turretSprite;
     private Coroutine _turretFireCoroutine;
-    private float _fireRate;    // TODO: 스폰 타임으로 접근해야
     private bool _isControlling;
     private bool _isAssigned;
     private int _turretPlayer;
@@ -27,7 +26,8 @@ public class CargunShipTurretController : MonoBehaviour {
     [SerializeField] private float muzzleVelocity;
     
     private IObjectPool<ProjectileController> _projectileSpawnPool;
-    
+    private float _fireRate;
+
     
     private void Init() {
         CargunShipManager.OnTurretActivate.AddListener(TurretActivate);
@@ -35,7 +35,7 @@ public class CargunShipTurretController : MonoBehaviour {
 
         this._turretSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
         this._isAssigned = false;
-        this._fireRate = 0.5f;
+        this._fireRate = 1f;
 
         this._projectileSpawnPool = new ObjectPool<ProjectileController>(
             BulletSpawn, OnGetFromPool, OnReleaseToPool, OnDestroyPooledBullet,
@@ -89,22 +89,22 @@ public class CargunShipTurretController : MonoBehaviour {
         while (true) {
             // 조이스틱 사용 감지 처리; while 조건문으로 기입하면 코루틴 탈출 시 복귀 불가
             if (ServerDataManager.Turret_Shoot[(int)this.turretType]) {
-                Debug.Log($"{this.turretType} - SHOOT!");    // TODO: 총알 생성 시 게임이 죽어버림.
+                Debug.Log($"{this.turretType} - SHOOT!");
                 var projectile = this._projectileSpawnPool.Get();
-
+                
                 if (!projectile) {
-                    break;
+                    yield break;
                 }
                 
                 projectile.transform.SetPositionAndRotation(this.turretMuzzle.position, this.turretMuzzle.rotation);
-                projectile.GetComponent<Rigidbody>().AddForce(
-                    projectile.transform.forward * this.muzzleVelocity, ForceMode.Acceleration);
+                projectile.GetComponent<Rigidbody2D>().AddForce(
+                    projectile.transform.forward * this.muzzleVelocity, ForceMode2D.Force);
                 
-                yield return new WaitForSeconds(this._fireRate);
-
                 // projectile.Deactivate();
                 projectile.ProjectileSpawnPool.Release(projectile);
             }
+
+            yield return new WaitForSeconds(this._fireRate);
         }
     }
 
@@ -127,7 +127,7 @@ public class CargunShipTurretController : MonoBehaviour {
     }
 
     private void OnGetFromPool(ProjectileController obj) {
-        obj.gameObject.SetActive(this);
+        obj.gameObject.SetActive(true);
     }
 
     private ProjectileController BulletSpawn() {
