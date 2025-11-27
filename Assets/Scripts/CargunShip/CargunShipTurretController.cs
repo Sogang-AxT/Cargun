@@ -23,10 +23,10 @@ public class CargunShipTurretController : MonoBehaviour {
     [SerializeField] private bool collectionCheck;
     [SerializeField] private int defaultPoolCapacity;
     [SerializeField] private int maxSize;
-    [SerializeField] private float muzzleVelocity;
+    [SerializeField] private float fireRate;
+
     
     private IObjectPool<ProjectileController> _projectileSpawnPool;
-    private float _fireRate;
 
     
     private void Init() {
@@ -35,7 +35,6 @@ public class CargunShipTurretController : MonoBehaviour {
 
         this._turretSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
         this._isAssigned = false;
-        this._fireRate = 1f;
 
         this._projectileSpawnPool = new ObjectPool<ProjectileController>(
             BulletSpawn, OnGetFromPool, OnReleaseToPool, OnDestroyPooledBullet,
@@ -90,6 +89,7 @@ public class CargunShipTurretController : MonoBehaviour {
             // 조이스틱 사용 감지 처리; while 조건문으로 기입하면 코루틴 탈출 시 복귀 불가
             if (ServerDataManager.Turret_Shoot[(int)this.turretType]) {
                 Debug.Log($"{this.turretType} - SHOOT!");
+                
                 var projectile = this._projectileSpawnPool.Get();
                 
                 if (!projectile) {
@@ -97,16 +97,9 @@ public class CargunShipTurretController : MonoBehaviour {
                 }
                 
                 projectile.transform.SetPositionAndRotation(this.turretMuzzle.position, this.turretMuzzle.rotation);
-                projectile.GetComponent<Rigidbody2D>().AddForce(
-                    projectile.transform.forward * this.muzzleVelocity, ForceMode2D.Force);
-                
-                // yield return new WaitForSeconds(this._fireRate);    // TODO: if 문 안으로 이동 금지; 무한루프
-                //
-                // // projectile.Deactivate();
-                // projectile.ProjectileSpawnPool.Release(projectile);
             }
 
-            yield return new WaitForSeconds(this._fireRate);    // TODO: if 문 안으로 이동 금지; 무한루프
+            yield return new WaitForSeconds(this.fireRate);    // TODO: if 문 안으로 이동 금지; 무한루프
         }
     }
 
@@ -116,8 +109,7 @@ public class CargunShipTurretController : MonoBehaviour {
         }
         
         this.transform.rotation 
-            = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y, 
-                -ServerDataManager.Turret_Rotation[(int)this.turretType]);
+            = Quaternion.Euler(0, 0, -ServerDataManager.Turret_Rotation[(int)this.turretType]);
     }
     
     private void OnDestroyPooledBullet(ProjectileController obj) {
@@ -135,7 +127,6 @@ public class CargunShipTurretController : MonoBehaviour {
     private ProjectileController BulletSpawn() {
         var projectileInstance = Instantiate(this.projectilePrefab);
         projectileInstance.ProjectileSpawnPool = this._projectileSpawnPool;
-        
         return projectileInstance;
     }
 }

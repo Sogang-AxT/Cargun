@@ -12,7 +12,8 @@ public class EnemyController : MonoBehaviour {
     private Transform _targetTransform;
     private float _currentHp;
     private float _currentSpeed;
-
+    
+    
     
     private void Init() {
         this.InitPos = this.gameObject.transform.position;
@@ -47,7 +48,7 @@ public class EnemyController : MonoBehaviour {
         MoveToShip();
     }
 
-    private void MoveToShip() {
+    private void MoveToShip() { // TODO: 4종으로 늘리기; state pattern
         this._targetDir = (this._targetTransform.position - this.gameObject.transform.position).normalized;
         this.gameObject.transform.position += this._targetDir * (this._currentSpeed * Time.deltaTime);
     }

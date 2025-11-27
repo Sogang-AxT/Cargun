@@ -1,16 +1,21 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Serialization;
 
 public class EnemySpawnController : MonoBehaviour {
-    [SerializeField] private EnemyController enemyPrefab;
+    [SerializeField] private EnemyController enemyPrefab;   // TODO: List<> -> Random.Range()
     [SerializeField] private bool collectionCheck;
     [SerializeField] private int defaultPoolCapacity;
     [SerializeField] private int maxSize;
+    [SerializeField] private float enemySpawnTime;
+    
+    [Space(10f)] 
+    
+    [SerializeField] private List<Transform> spawnPivots;
     
     private IObjectPool<EnemyController> _enemySpawnPool;
-    private float _enemySpawnTime;
     
     
     private void Init() {
@@ -18,7 +23,6 @@ public class EnemySpawnController : MonoBehaviour {
             EnemySpawn, OnGetFromPool, OnReleaseToPool, OnDestroyPooledEnemy, 
             this.collectionCheck, this.defaultPoolCapacity, this.maxSize);
         
-        this._enemySpawnTime = 2f;
         EnemyManager.OnEnemySpawnActivate.AddListener(EnemySpawnActivate);
     }
     
@@ -56,9 +60,18 @@ public class EnemySpawnController : MonoBehaviour {
                 yield break;
             }
             
-            yield return new WaitForSeconds(this._enemySpawnTime);
+            yield return new WaitForSeconds(this.enemySpawnTime);
             
             var enemy = this._enemySpawnPool.Get();
+            
+            // 적 출현 포지션 무작위화
+            var spawnPivot = this.spawnPivots[Random.Range(0, this.spawnPivots.Count)];
+            var spawnRadius = 5f;
+            
+            var spawnRandomOffset = Random.insideUnitCircle * spawnRadius;
+            var spawnPosition = (Vector2)spawnPivot.position + spawnRandomOffset;
+
+            enemy.transform.position = spawnPosition;
 
             if (!enemy) {
                 yield break;
