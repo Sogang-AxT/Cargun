@@ -934,11 +934,15 @@ MonoBehaviour:
   onlineTurretSprite: {fileID: 21300000, guid: 3b45f537840eb0641ae37c68acda29e2, type: 3}
   turretType: 2
   turretMuzzle: {fileID: 606477887}
-  projectilePrefab: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
+  projectileDataDic:
+    m_keys: 0000000001000000
+    m_values:
+    - {fileID: 11400000, guid: c26eb0dbd66bad346ad0f3bca93aecf6, type: 2}
+    - {fileID: 11400000, guid: 98a58d6110f927943b948134d5e2c442, type: 2}
+  projectile: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
   collectionCheck: 0
   defaultPoolCapacity: 10
   maxSize: 50
-  fireRate: 0.1
 --- !u!1 &431952855
 GameObject:
   m_ObjectHideFlags: 0
@@ -2156,11 +2160,15 @@ MonoBehaviour:
   onlineTurretSprite: {fileID: 21300000, guid: eb2c9f42782afd0459588af3aded7aac, type: 3}
   turretType: 3
   turretMuzzle: {fileID: 607350070}
-  projectilePrefab: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
+  projectileDataDic:
+    m_keys: 0000000001000000
+    m_values:
+    - {fileID: 11400000, guid: c26eb0dbd66bad346ad0f3bca93aecf6, type: 2}
+    - {fileID: 11400000, guid: 98a58d6110f927943b948134d5e2c442, type: 2}
+  projectile: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
   collectionCheck: 0
   defaultPoolCapacity: 10
   maxSize: 50
-  fireRate: 0.1
 --- !u!1 &903211884
 GameObject:
   m_ObjectHideFlags: 0
@@ -2173,7 +2181,6 @@ GameObject:
   - component: {fileID: 903211885}
   - component: {fileID: 903211889}
   - component: {fileID: 903211887}
-  - component: {fileID: 903211888}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Player
@@ -2270,19 +2277,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48ddf8d3ab974e078a0b18fac791a057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Turret
---- !u!114 &903211888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 903211884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05380dde18a74caf8d71c7113b1aeb6b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CargunShipData
-  hp: 5
 --- !u!60 &903211889
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -2321,7 +2315,7 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 9.6, y: 3.1076922}
+    oldSize: {x: 9.599999, y: 3.1125}
     newSize: {x: 6.24, y: 2.02}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -2794,11 +2788,15 @@ MonoBehaviour:
   onlineTurretSprite: {fileID: 21300000, guid: c797ee11d6c09984a976f21236daa373, type: 3}
   turretType: 1
   turretMuzzle: {fileID: 2073559134}
-  projectilePrefab: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
+  projectileDataDic:
+    m_keys: 0000000001000000
+    m_values:
+    - {fileID: 11400000, guid: c26eb0dbd66bad346ad0f3bca93aecf6, type: 2}
+    - {fileID: 11400000, guid: 98a58d6110f927943b948134d5e2c442, type: 2}
+  projectile: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
   collectionCheck: 0
   defaultPoolCapacity: 10
   maxSize: 50
-  fireRate: 0.1
 --- !u!1 &973261712
 GameObject:
   m_ObjectHideFlags: 0
@@ -4629,11 +4627,15 @@ MonoBehaviour:
   onlineTurretSprite: {fileID: 21300000, guid: 097620cb10ecdeb49b7fe8fdd7e19f2f, type: 3}
   turretType: 0
   turretMuzzle: {fileID: 1351513318}
-  projectilePrefab: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
+  projectileDataDic:
+    m_keys: 0000000001000000
+    m_values:
+    - {fileID: 11400000, guid: c26eb0dbd66bad346ad0f3bca93aecf6, type: 2}
+    - {fileID: 11400000, guid: 98a58d6110f927943b948134d5e2c442, type: 2}
+  projectile: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
   collectionCheck: 0
   defaultPoolCapacity: 10
   maxSize: 50
-  fireRate: 0.1
 --- !u!1 &1883507849
 GameObject:
   m_ObjectHideFlags: 0

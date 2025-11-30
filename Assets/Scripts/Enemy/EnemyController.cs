@@ -30,14 +30,14 @@ public class EnemyController : MonoBehaviour {
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.CompareTag(EnemyManager.BulletTag)) {
-            var bullet = other.gameObject.GetComponent<ProjectileController>();
-            var bulletDmg = bullet.Dmg;
-
-            this._currentHp -= bulletDmg;
+        if (other.gameObject.CompareTag("Bullet")) {
+            var bullet = other.gameObject.GetComponent<Projectile>();
+            // var bulletDmg = bullet.Dmg;
+            // TODO: 적에게 데미지 부여; 이벤트로
+            // this._currentHp -= bulletDmg;
             EnemyReturnToPool();
         }
-        else if (other.gameObject.CompareTag(EnemyManager.ShipTag)) {
+        else if (other.gameObject.CompareTag("Player")) {
             // TODO: 함선 공격
             this._currentHp = 0;
             EnemyReturnToPool();

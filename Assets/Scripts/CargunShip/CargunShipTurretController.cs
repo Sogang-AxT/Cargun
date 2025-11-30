@@ -1,44 +1,31 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Pool;
 
 // 함선 터릿 제어
 public class CargunShipTurretController : MonoBehaviour {
-    [SerializeField] private Sprite offlineTurretSprite;
-    [SerializeField] private Sprite onlineTurretSprite;
-    [Space(10f)]
-    [SerializeField] private GCEnumManager.TURRET_TYPE turretType;
-    [SerializeField] private Transform turretMuzzle;
-    
-    private Sprite _turretSprite;
-    private Coroutine _turretFireCoroutine;
-    private bool _isControlling;
-    private bool _isAssigned;
-    private int _turretPlayer;
+    [SerializeField] private ProjectileSpawnController projectileSpawnController;
     
     [Space(25f)]
     
-    [Header("Projectile")]
-    [SerializeField] private ProjectileController projectilePrefab;
-    [SerializeField] private bool collectionCheck;
-    [SerializeField] private int defaultPoolCapacity;
-    [SerializeField] private int maxSize;
-    [SerializeField] private float fireRate;
-
+    [SerializeField] private GCEnumManager.TURRET_TYPE turretNumber;
+    [SerializeField] private Transform turretMuzzleTransform;
     
-    private IObjectPool<ProjectileController> _projectileSpawnPool;
-
+    private GCEnumManager.PROJECTILE_TYPE _currentProjectileType;
+    private Coroutine _turretFireCoroutine;
+    private bool _isAssigned;
+    private int _turretPlayer;
+    private float _turretFireRate;
+    
     
     private void Init() {
         CargunShipManager.OnTurretActivate.AddListener(TurretActivate);
         GameManager.OnTurretAssign.AddListener(TurretAssign);
 
-        this._turretSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
+        this._currentProjectileType = GCEnumManager.PROJECTILE_TYPE.DEFAULT;    // TODO: 플레이어의 아이템 항목 로드; 어디서?
+        this._turretFireCoroutine = null;
         this._isAssigned = false;
-
-        this._projectileSpawnPool = new ObjectPool<ProjectileController>(
-            BulletSpawn, OnGetFromPool, OnReleaseToPool, OnDestroyPooledBullet,
-            this.collectionCheck, this.defaultPoolCapacity, this.maxSize);
+        this._turretPlayer = 0;
+        this._turretFireRate = 1f;
     }
     
     private void Awake() {
@@ -50,14 +37,12 @@ public class CargunShipTurretController : MonoBehaviour {
     }
 
     private void TurretAssign(int player) {
-        if (ServerDataManager.Turret_Player[(int)this.turretType] != player) {
+        if (ServerDataManager.Turret_Player[(int)this.turretNumber] != player) {
             // Debug.Log(this.turretType + " - UnAssigned!");
-            this._turretSprite = this.offlineTurretSprite;
             return;
         }
         
         this._turretPlayer = player;
-        this._turretSprite = this.onlineTurretSprite;
         this._isAssigned = true;
     }
     
@@ -87,46 +72,30 @@ public class CargunShipTurretController : MonoBehaviour {
     private IEnumerator TurretFire() {
         while (true) {
             // 조이스틱 사용 감지 처리; while 조건문으로 기입하면 코루틴 탈출 시 복귀 불가
-            if (ServerDataManager.Turret_Shoot[(int)this.turretType]) {
-                Debug.Log($"{this.turretType} - SHOOT!");
+            if (ServerDataManager.Turret_Shoot[(int)this.turretNumber]) {
+                // Debug.Log($"{this.turretType} - SHOOT!");
                 
-                var projectile = this._projectileSpawnPool.Get();
+                // TODO: Projectile type change
+                var projectile = this.projectileSpawnController.GetProjectile(this._currentProjectileType, 
+                    this.turretMuzzleTransform.position, this.turretMuzzleTransform.rotation);
                 
                 if (!projectile) {
                     yield break;
                 }
                 
-                projectile.transform.SetPositionAndRotation(this.turretMuzzle.position, this.turretMuzzle.rotation);
+                this._turretFireRate = projectile.FireRate;
             }
 
-            yield return new WaitForSeconds(this.fireRate);    // TODO: if 문 안으로 이동 금지; 무한루프
+            yield return new WaitForSeconds(this._turretFireRate);    // if 문 안으로 이동 금지; 무한루프
         }
     }
 
     private void TurretRotate() {
-        if (ServerDataManager.Turret_Player[(int)this.turretType] == 0) {
+        if (ServerDataManager.Turret_Player[(int)this.turretNumber] == 0) {
             return;
         }
         
         this.transform.rotation 
-            = Quaternion.Euler(0, 0, -ServerDataManager.Turret_Rotation[(int)this.turretType]);
-    }
-    
-    private void OnDestroyPooledBullet(ProjectileController obj) {
-        Destroy(obj.gameObject);
-    }
-
-    private void OnReleaseToPool(ProjectileController obj) {
-        obj.gameObject.SetActive(false);
-    }
-
-    private void OnGetFromPool(ProjectileController obj) {
-        obj.gameObject.SetActive(true);
-    }
-
-    private ProjectileController BulletSpawn() {
-        var projectileInstance = Instantiate(this.projectilePrefab);
-        projectileInstance.ProjectileSpawnPool = this._projectileSpawnPool;
-        return projectileInstance;
+            = Quaternion.Euler(0, 0, -ServerDataManager.Turret_Rotation[(int)this.turretNumber]);
     }
 }

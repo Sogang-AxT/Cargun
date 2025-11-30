@@ -32,4 +32,18 @@ public static class GCEnumManager {
         C,
         D
     }
+
+    public enum PROJECTILE_TYPE {
+        DEFAULT,
+        LASER,
+        ROCKET,
+        SHOTGUN
+    }
+
+    public enum ITEM_TYPE {
+        P_LASER,
+        P_ROCKET,
+        P_SHOTGUN,
+        HEALTH
+    }
 }
