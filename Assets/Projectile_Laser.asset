@@ -15,4 +15,4 @@ MonoBehaviour:
   projectileType: 1
   velocity: 10
   damage: 10
-  fireRate: 100
+  fireRate: 1

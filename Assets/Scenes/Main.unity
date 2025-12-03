@@ -858,7 +858,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemProjectileController
   projectileType: 1
-  usableTime: 90
+  usableTime: 5
 --- !u!212 &396813596
 SpriteRenderer:
   m_ObjectHideFlags: 0
