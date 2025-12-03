@@ -31,7 +31,6 @@ public class EnemyController : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.CompareTag("Bullet")) {
-            var bullet = other.gameObject.GetComponent<Projectile>();
             // var bulletDmg = bullet.Dmg;
             // TODO: 적에게 데미지 부여; 이벤트로
             // this._currentHp -= bulletDmg;

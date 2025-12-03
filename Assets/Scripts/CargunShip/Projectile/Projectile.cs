@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -10,7 +11,7 @@ public abstract class Projectile : MonoBehaviour {
     public float Velocity { get; private set; }
     public float Damage { get; private set; }
     public float FireRate { get; private set; }
-    public int UsableTime { get; private set; }
+
     
     
     public void Init(IObjectPool<Projectile> pool) {
@@ -20,7 +21,6 @@ public abstract class Projectile : MonoBehaviour {
         this.Velocity = this.projectileData.velocity;
         this.Damage = this.projectileData.damage;
         this.FireRate = this.projectileData.fireRate;
-        this.UsableTime = this.projectileData.usableTime;
     }
 
     protected void Update() {
@@ -28,7 +28,12 @@ public abstract class Projectile : MonoBehaviour {
     }
     
     protected void Deactivate() {
-        this.ProjectileSpawnPool.Release(this);
+        try { 
+            this.ProjectileSpawnPool.Release(this);
+        }
+        catch (InvalidOperationException e) {
+            return;
+        }
     }
     
     protected abstract void Shoot();

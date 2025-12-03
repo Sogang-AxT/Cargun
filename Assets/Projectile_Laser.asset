@@ -14,7 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   projectileType: 1
   velocity: 10
-  dmg: 10
-  rpm: 1
-  usableTime: 30
-  projectileSprite: {fileID: 21300000, guid: c09c557e3b7d585419fc87f2b42c2bd6, type: 3}
+  damage: 10
+  fireRate: 100

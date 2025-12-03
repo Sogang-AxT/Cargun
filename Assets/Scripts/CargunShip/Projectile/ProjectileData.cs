@@ -6,5 +6,4 @@ public class ProjectileData : ScriptableObject {
     public float velocity;
     public float damage;
     public float fireRate;
-    public int usableTime;
 }

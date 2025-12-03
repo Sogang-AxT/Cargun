@@ -24,7 +24,7 @@ public class ProjectileSpawnController : MonoBehaviour {
             }, {
                 GCEnumManager.PROJECTILE_TYPE.LASER, new ObjectPool<Projectile>(
                     createFunc: () => {
-                        var projectileInstance = Instantiate(this.defaultProjectile);
+                        var projectileInstance = Instantiate(this.laserProjectile);
                         projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.LASER]);
                         return projectileInstance;
                     }, /* actionOnGet: OnGetFromPool,*/
@@ -32,7 +32,7 @@ public class ProjectileSpawnController : MonoBehaviour {
             }, {
                 GCEnumManager.PROJECTILE_TYPE.ROCKET, new ObjectPool<Projectile>(
                     createFunc: () => {
-                        var projectileInstance = Instantiate(this.defaultProjectile);
+                        var projectileInstance = Instantiate(this.rocketProjectile);
                         projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.ROCKET]);
                         return projectileInstance;
                     }, /* actionOnGet: OnGetFromPool,*/
@@ -40,7 +40,7 @@ public class ProjectileSpawnController : MonoBehaviour {
             }, {
                 GCEnumManager.PROJECTILE_TYPE.SHOTGUN, new ObjectPool<Projectile>(
                     createFunc: () => {
-                        var projectileInstance = Instantiate(this.defaultProjectile);
+                        var projectileInstance = Instantiate(this.shotgunProjectile);
                         projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.SHOTGUN]);
                         return projectileInstance;
                     }, /* actionOnGet: OnGetFromPool,*/

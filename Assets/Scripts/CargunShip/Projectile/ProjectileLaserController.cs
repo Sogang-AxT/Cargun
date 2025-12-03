@@ -9,7 +9,7 @@ public class ProjectileLaserController : Projectile {
             // TODO: 적에게 데미지 부여; 이벤트로
         }
         else if (other.gameObject.CompareTag("Item")) {
-            ItemManager.OnItemHit.Invoke(); // TODO: 아이템 효과 이벤트 Invoke
+            // TODO: 아이템 효과 이벤트 Invoke
         }
     }
     

@@ -41,9 +41,9 @@ public static class GCEnumManager {
     }
 
     public enum ITEM_TYPE {
-        P_LASER,
-        P_ROCKET,
-        P_SHOTGUN,
+        // LASER,
+        // ROCKET,
+        // SHOTGUN,
         HEALTH
     }
 }
