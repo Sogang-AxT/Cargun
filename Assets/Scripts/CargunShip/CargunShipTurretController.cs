@@ -40,7 +40,12 @@ public class CargunShipTurretController : MonoBehaviour {
     }
     
     // TODO: 터릿이 아니라 사용자를 따라가게
-    private void ProjectileTypeChange(GCEnumManager.PROJECTILE_TYPE projectileType, float usableTime) {
+    private void ProjectileTypeChange(
+        GCEnumManager.PROJECTILE_TYPE projectileType, float usableTime, GCEnumManager.TURRET_TYPE turretId) {
+        if (this.turretNumber != turretId) {
+            return;
+        }
+        
         if (this._projectileChangeCoroutine != null) {
             StopCoroutine(this._projectileChangeCoroutine);
         }
@@ -52,11 +57,11 @@ public class CargunShipTurretController : MonoBehaviour {
         var t = usableTime;
         this._currentProjectileType = projectileType;
         
-        Debug.Log(this._currentProjectileType);
+        // Debug.Log(this._currentProjectileType);
 
         while (t > 0) {
             t -= 1;
-            Debug.Log(t);
+            // Debug.Log(t);
             yield return new WaitForSeconds(1f);
         }
 
@@ -99,7 +104,7 @@ public class CargunShipTurretController : MonoBehaviour {
                 
                 // TODO: Projectile type change
                 
-                Debug.Log(this._currentProjectileType);
+                // Debug.Log(this._currentProjectileType);
                 
                 var projectile = this.projectileSpawnController.GetProjectile(this._currentProjectileType, 
                     this.turretMuzzleTransform.position, this.turretMuzzleTransform.rotation);
@@ -109,6 +114,7 @@ public class CargunShipTurretController : MonoBehaviour {
                 }
                 
                 this._turretFireRate = projectile.FireRate;
+                projectile.TurretId = this.turretNumber;
             }
 
             yield return new WaitForSeconds(this._turretFireRate);    // if 문 안으로 이동 금지; 무한루프

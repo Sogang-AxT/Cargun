@@ -8,10 +8,11 @@ public abstract class Projectile : MonoBehaviour {
     protected IObjectPool<Projectile> ProjectileSpawnPool { get; private set; }
     protected GCEnumManager.PROJECTILE_TYPE ProjectileType { get; private set; }
     
+    public GCEnumManager.TURRET_TYPE TurretId { get; set; }
+    
     public float Velocity { get; private set; }
     public float Damage { get; private set; }
     public float FireRate { get; private set; }
-
     
     
     public void Init(IObjectPool<Projectile> pool) {

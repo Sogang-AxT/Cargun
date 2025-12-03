@@ -6,11 +6,6 @@ public class ProjectileDefaultController : Projectile {
             Deactivate();
             // TODO: 적에게 데미지 부여; 이벤트로
         }
-        // else if (other.gameObject.CompareTag("Item")) {
-        //     // TODO: 아이템 효과 이벤트 Invoke
-        //     // ItemManager.OnItemHit.Invoke();
-        //     other.gameObject.GetComponent<Item>().ItemHit();
-        // }
     }
     
     protected override void Shoot() {
