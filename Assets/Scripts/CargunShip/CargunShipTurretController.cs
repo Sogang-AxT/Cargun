@@ -39,10 +39,9 @@ public class CargunShipTurretController : MonoBehaviour {
         TurretRotate();
     }
     
-    // TODO: 터릿이 아니라 사용자를 따라가게
     private void ProjectileTypeChange(
         GCEnumManager.PROJECTILE_TYPE projectileType, float usableTime, GCEnumManager.TURRET_TYPE turretId) {
-        /*
+        /* // TODO: 터릿이 아니라 사용자를 따라가게
          * 플레이어 데이터에 아이템 사용 중인 정보 기록
          * 플레이어 데이터 관리자에게서 총알 타입 불러오기
          */
