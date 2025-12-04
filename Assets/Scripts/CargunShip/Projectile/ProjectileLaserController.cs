@@ -5,16 +5,12 @@ public class ProjectileLaserController : Projectile {
         if (other.gameObject.CompareTag("Wall")) {
             Deactivate();
         }
-        else if (other.gameObject.CompareTag("Enemy")) {
-            // TODO: 적에게 데미지 부여; 이벤트로
-        }
         else if (other.gameObject.CompareTag("Item")) {
             // TODO: 아이템 효과 이벤트 Invoke
         }
     }
     
     protected override void Shoot() {
-        // TODO: 레이저 무기 발사 구현
-        throw new System.NotImplementedException();
+        this.transform.position += this.transform.up * (this.Velocity * Time.deltaTime);
     }
 }

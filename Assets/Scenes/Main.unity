@@ -839,7 +839,7 @@ GameObject:
   - component: {fileID: 396813595}
   - component: {fileID: 396813598}
   m_Layer: 0
-  m_Name: Triangle
+  m_Name: Item Laser
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -858,7 +858,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemProjectileController
   projectileType: 1
-  usableTime: 50
+  usableTime: 30
 --- !u!212 &396813596
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -906,7 +906,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: -5177388603050735206, guid: 8884154dfe85442a3a3578be807dbcdf, type: 3}
   m_Color: {r: 0, g: 0.44506502, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -932,8 +932,8 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!60 &396813598
-PolygonCollider2D:
+--- !u!61 &396813598
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -962,26 +962,22 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
+    border: {x: 0.25, y: 0.25, z: 0.25, w: 0.25}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0, y: 0.5773587}
-      - {x: -0.5, y: -0.28866667}
-      - {x: 0.5, y: -0.28866667}
-  m_UseDelaunayMesh: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &417975869
 GameObject:
   m_ObjectHideFlags: 0
@@ -4302,8 +4298,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyPrefab: {fileID: 5703097278068361988, guid: cc222e615565fac4a8752743fd38af8c, type: 3}
   collectionCheck: 0
-  defaultPoolCapacity: 100
-  maxSize: 1000
+  defaultPoolCapacity: 50
+  maxSize: 100
   enemySpawnTime: 0.3
   spawnPivots:
   - {fileID: 556281544}
@@ -4513,7 +4509,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileSpawnController
   defaultProjectile: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
-  laserProjectile: {fileID: -7826199685366202740, guid: 9c9d819c29b823145816a96a4ec6f519, type: 3}
+  laserProjectile: {fileID: 7071580571587963940, guid: 9c9d819c29b823145816a96a4ec6f519, type: 3}
   rocketProjectile: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
   shotgunProjectile: {fileID: -6411180529532303491, guid: cbab15e405c32a545978d4c5f33e8f68, type: 3}
 --- !u!4 &1806875002

@@ -29,12 +29,11 @@ public abstract class Projectile : MonoBehaviour {
     }
     
     protected void Deactivate() {
-        try { 
-            this.ProjectileSpawnPool.Release(this);
-        }
-        catch (InvalidOperationException e) {
+        if (!this.gameObject.activeSelf) {
             return;
         }
+        
+        this.ProjectileSpawnPool.Release(this);
     }
     
     protected abstract void Shoot();

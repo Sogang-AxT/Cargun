@@ -138,9 +138,6 @@ public class ServerManager : MonoBehaviour {
                     {
                         ServerDataManager.Turret_Player = turretPlayerArray;
                     }
-
-                    // Debug.Log($"[GameData] TotalPlayer: {ServerDataManager.TotalPlayer}");
-                    // TODO: 조이스틱 입력
                 }
                 catch (System.Exception ex)
                 {

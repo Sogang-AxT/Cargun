@@ -20,7 +20,7 @@ public class ProjectileSpawnController : MonoBehaviour {
                         projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.DEFAULT]);
                         return projectileInstance;
                     }, /* actionOnGet: OnGetFromPool,*/
-                    actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 400)
+                    actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 100)
             }, {
                 GCEnumManager.PROJECTILE_TYPE.LASER, new ObjectPool<Projectile>(
                     createFunc: () => {
@@ -28,7 +28,7 @@ public class ProjectileSpawnController : MonoBehaviour {
                         projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.LASER]);
                         return projectileInstance;
                     }, /* actionOnGet: OnGetFromPool,*/
-                    actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 400)
+                    actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 100)
             }, {
                 GCEnumManager.PROJECTILE_TYPE.ROCKET, new ObjectPool<Projectile>(
                     createFunc: () => {
@@ -36,7 +36,7 @@ public class ProjectileSpawnController : MonoBehaviour {
                         projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.ROCKET]);
                         return projectileInstance;
                     }, /* actionOnGet: OnGetFromPool,*/
-                    actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 400)
+                    actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 100)
             }, {
                 GCEnumManager.PROJECTILE_TYPE.SHOTGUN, new ObjectPool<Projectile>(
                     createFunc: () => {
@@ -44,9 +44,27 @@ public class ProjectileSpawnController : MonoBehaviour {
                         projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.SHOTGUN]);
                         return projectileInstance;
                     }, /* actionOnGet: OnGetFromPool,*/
-                    actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 400)
+                    actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 100)
             }
         };
+        
+        // Pre-warm
+        var prewarmCount = 20; 
+        
+        foreach (var poolPair in _projectileSpawnPoolDic) {
+            var pool = poolPair.Value;
+            var tempProjectiles = new List<Projectile>();
+
+            // 1. Instantiate
+            for (var i = 0; i < prewarmCount; i++) {
+                tempProjectiles.Add(pool.Get());
+            }
+
+            // 2. Release
+            foreach (var projectile in tempProjectiles) {
+                pool.Release(projectile);
+            }
+        }
     }
 
     private void Awake() {
