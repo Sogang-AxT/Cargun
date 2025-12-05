@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Serialization;
@@ -23,6 +24,17 @@ public class EnemySpawnController : MonoBehaviour {
             EnemySpawn, OnGetFromPool, OnReleaseToPool, OnDestroyPooledEnemy, 
             this.collectionCheck, this.defaultPoolCapacity, this.maxSize);
         
+        // Pre-warm
+        var prewarmedEnemies = new List<EnemyController>();
+        
+        for (var i = 0; i < this.defaultPoolCapacity; i++) {
+            prewarmedEnemies.Add(this._enemySpawnPool.Get());
+        }
+
+        foreach (var enemy in prewarmedEnemies) {
+            this._enemySpawnPool.Release(enemy);
+        }
+        
         EnemyManager.OnEnemySpawnActivate.AddListener(EnemySpawnActivate);
     }
     
@@ -38,7 +50,6 @@ public class EnemySpawnController : MonoBehaviour {
     }
 
     private void OnReleaseToPool(EnemyController obj) {
-        obj.gameObject.transform.position = obj.InitPos;
         obj.gameObject.SetActive(false);
     }
     

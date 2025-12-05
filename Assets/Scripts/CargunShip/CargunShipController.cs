@@ -1,27 +1,20 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
-// 함선 제어
+
 public class CargunShipController : MonoBehaviour {
-    private readonly string _enemyTag = "Enemy";
-    public float Hp { get; private set; }
+    private float _hp;
 
     
     private void OnCollisionEnter2D(Collision2D other) {
-        if (other.gameObject.CompareTag(this._enemyTag)) {
-            var enemy = other.gameObject.GetComponent<EnemyData>();
-            var enemyDmg = enemy.dmg;
-
-            this.Hp -= enemyDmg;
-            CargunShipReturnToStation();
+        if (other.gameObject.CompareTag("Enemy")) {
+            if (other.gameObject.TryGetComponent<EnemyController>(out var enemy)) {
+                this._hp -= enemy.Damage;
+                // TODO: VFX
+            }
+            
+            if (this._hp <= 0f) {
+                GameManager.OnGameOver.Invoke();    // TODO: Game Over
+            }
         }
-    }
-
-    private void CargunShipReturnToStation() {
-        if (this.Hp > 0f) {
-            return;
-        }
-        
-        GameManager.OnGameOver.Invoke();    // TODO: Game Over
     }
 }
