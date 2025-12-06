@@ -22,8 +22,8 @@ public class CargunShipTurretController : MonoBehaviour {
         CargunShipManager.OnTurretActivate.AddListener(TurretActivate);
         CargunShipManager.OnProjectileItemGet.AddListener(ProjectileTypeChange);
         GameManager.OnTurretAssign.AddListener(TurretAssign);
-        
-        this._currentProjectileType = GCEnumManager.PROJECTILE_TYPE.DEFAULT;    // TODO: 플레이어의 아이템 항목 로드; 어디서?
+
+        this._currentProjectileType = GCEnumManager.PROJECTILE_TYPE.DEFAULT;
         this._turretFireCoroutine = null;
         this._projectileChangeCoroutine = null;
         this._isAssigned = false;
@@ -39,16 +39,10 @@ public class CargunShipTurretController : MonoBehaviour {
         TurretRotate();
     }
     
-    private void ProjectileTypeChange(
-        GCEnumManager.PROJECTILE_TYPE projectileType, float usableTime, GCEnumManager.TURRET_TYPE turretId) {
-        /* // TODO: 터릿이 아니라 사용자를 따라가게
-         * 플레이어 데이터에 아이템 사용 중인 정보 기록
-         * 플레이어 데이터 관리자에게서 총알 타입 불러오기
-         */
-        
-        if (this.turretNumber != turretId) {
-            return;
-        }
+    private void ProjectileTypeChange(GCEnumManager.PROJECTILE_TYPE projectileType, float usableTime) {
+        // if (this.turretNumber != turretId) {
+        //     return;
+        // }
         
         if (this._projectileChangeCoroutine != null) {
             StopCoroutine(this._projectileChangeCoroutine);
