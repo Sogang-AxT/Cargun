@@ -1,12 +1,9 @@
 using UnityEngine;
 
-public class ProjectileLaserController : Projectile {
+public class ProjectileSizeUpController : Projectile {
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.CompareTag("Wall")) {
             Deactivate();
-        }
-        else if (other.gameObject.CompareTag("Item")) {
-            // TODO: 아이템 효과 이벤트 Invoke
         }
     }
     

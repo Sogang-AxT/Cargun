@@ -35,15 +35,7 @@ public static class GCEnumManager {
 
     public enum PROJECTILE_TYPE {
         DEFAULT,
-        LASER,
-        ROCKET,
-        SHOTGUN
-    }
-
-    public enum ITEM_TYPE {
-        // LASER,
-        // ROCKET,
-        // SHOTGUN,
-        HEALTH
+        RAPID,
+        SIZEUP,
     }
 }

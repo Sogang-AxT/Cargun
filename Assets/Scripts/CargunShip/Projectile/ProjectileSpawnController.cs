@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.Serialization;
 
 public class ProjectileSpawnController : MonoBehaviour {
     private Dictionary<GCEnumManager.PROJECTILE_TYPE, IObjectPool<Projectile>> _projectileSpawnPoolDic;
 
     [SerializeField] private Projectile defaultProjectile;
-    [SerializeField] private Projectile laserProjectile;
-    [SerializeField] private Projectile rocketProjectile;
-    [SerializeField] private Projectile shotgunProjectile;
+    [SerializeField] private Projectile rapidProjectile;
+    [SerializeField] private Projectile sizeUpProjectile;
 
 
     private void Init() {
@@ -22,26 +22,18 @@ public class ProjectileSpawnController : MonoBehaviour {
                     }, /* actionOnGet: OnGetFromPool,*/
                     actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 100)
             }, {
-                GCEnumManager.PROJECTILE_TYPE.LASER, new ObjectPool<Projectile>(
+                GCEnumManager.PROJECTILE_TYPE.RAPID, new ObjectPool<Projectile>(
                     createFunc: () => {
-                        var projectileInstance = Instantiate(this.laserProjectile);
-                        projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.LASER]);
+                        var projectileInstance = Instantiate(this.rapidProjectile);
+                        projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.RAPID]);
                         return projectileInstance;
                     }, /* actionOnGet: OnGetFromPool,*/
                     actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 100)
             }, {
-                GCEnumManager.PROJECTILE_TYPE.ROCKET, new ObjectPool<Projectile>(
+                GCEnumManager.PROJECTILE_TYPE.SIZEUP, new ObjectPool<Projectile>(
                     createFunc: () => {
-                        var projectileInstance = Instantiate(this.rocketProjectile);
-                        projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.ROCKET]);
-                        return projectileInstance;
-                    }, /* actionOnGet: OnGetFromPool,*/
-                    actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 100)
-            }, {
-                GCEnumManager.PROJECTILE_TYPE.SHOTGUN, new ObjectPool<Projectile>(
-                    createFunc: () => {
-                        var projectileInstance = Instantiate(this.shotgunProjectile);
-                        projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.SHOTGUN]);
+                        var projectileInstance = Instantiate(this.sizeUpProjectile);
+                        projectileInstance.Init(this._projectileSpawnPoolDic[GCEnumManager.PROJECTILE_TYPE.SIZEUP]);
                         return projectileInstance;
                     }, /* actionOnGet: OnGetFromPool,*/
                     actionOnRelease: OnReleaseToPool, actionOnDestroy: OnDestroyPooledBullet, maxSize: 100)

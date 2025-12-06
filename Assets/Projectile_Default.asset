@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Projectile_Default
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   projectileType: 0
-  velocity: 5
-  damage: 5
-  fireRate: 0.3
+  velocity: 10
+  damage: 2
+  fireRate: 0.25

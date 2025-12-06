@@ -99,19 +99,14 @@ public class CargunShipTurretController : MonoBehaviour {
             if (ServerDataManager.Turret_Shoot[(int)this.turretNumber]) {
                 // Debug.Log($"{this.turretType} - SHOOT!");
                 
-                // TODO: Projectile type change
-                
                 var projectile = this.projectileSpawnController.GetProjectile(this._currentProjectileType, 
                     this.turretMuzzleTransform.position, this.turretMuzzleTransform.rotation);
                 
                 this._turretFireRate = projectile.FireRate;
                 projectile.TurretId = this.turretNumber;
-                
-                yield return new WaitForSeconds(this._turretFireRate);
             }
-            else {
-                yield return new WaitForSeconds(1);
-            }
+            
+            yield return new WaitForSeconds(this._turretFireRate);
         }
     }
 
