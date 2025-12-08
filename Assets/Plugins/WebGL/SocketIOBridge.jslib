@@ -7,18 +7,28 @@ mergeInto(LibraryManager.library, {
         // Socket.IO 라이브러리 동적 로드
         if (typeof io === 'undefined') {
             var script = document.createElement('script');
-            script.src = 'https://cdn.socket.io/4.5.4/socket.io.min.js';
+            script.src = 'https://cdn.socket.io/4.7.4/socket.io.min.js';
+            script.crossOrigin = 'anonymous';
             script.onload = function() {
                 console.log("✅ Socket.IO 라이브러리 로드 완료");
                 window.unitySocket = io(url, {
-                    transports: ['websocket', 'polling']
+                    transports: ['websocket', 'polling'],
+                    reconnection: true,
+                    reconnectionDelay: 1000,
+                    reconnectionAttempts: 5
                 });
                 setupSocketEvents();
+            };
+            script.onerror = function() {
+                console.error("❌ Socket.IO 라이브러리 로드 실패");
             };
             document.head.appendChild(script);
         } else {
             window.unitySocket = io(url, {
-                transports: ['websocket', 'polling']
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionAttempts: 5
             });
             setupSocketEvents();
         }
@@ -26,45 +36,73 @@ mergeInto(LibraryManager.library, {
         function setupSocketEvents() {
             var socket = window.unitySocket;
             
+            // ✅ 현재 Phase를 추적하기 위한 변수 (window에 저장)
+            if (!window.currentGamePhase) {
+                window.currentGamePhase = 'prepare';
+            }
+            
             // 연결 성공
             socket.on('connect', function() {
-                console.log("✅ Socket.IO 연결 성공!");
+                console.log("✅ Socket.IO 연결 성공! Socket ID:", socket.id);
                 
-                // 즉시 Unity 클라이언트 등록
-                console.log("📤 Unity 클라이언트 등록 전송");
-                socket.emit('registerUnity', { type: 'unity' });
+                // ✅ Unity 클라이언트 등록 (currentPhase 포함)
+                var registrationData = {
+                    connectType: "UNITY_WEBGL",
+                    currentPhase: window.currentGamePhase
+                };
+                
+                console.log("📤 Unity 클라이언트 등록 전송:", registrationData);
+                socket.emit('registerUnity', registrationData);
                 
                 // Unity에 연결 성공 알림
                 SendMessage('ServerManager', 'OnSocketConnected', '');
             });
             
             // 연결 끊김
-            socket.on('disconnect', function() {
-                console.log("❌ Socket.IO 연결 끊김");
+            socket.on('disconnect', function(reason) {
+                console.log("❌ Socket.IO 연결 끊김. 이유:", reason);
                 SendMessage('ServerManager', 'OnSocketDisconnected', '');
             });
             
-            // Unity 클라이언트 등록 확인
-            socket.on('registerUnity', function() {
-                console.log("✅ Unity 클라이언트 등록 완료");
+            // 연결 에러
+            socket.on('connect_error', function(error) {
+                console.error("❌ Socket.IO 연결 에러:", error.message);
             });
             
-            // 플레이어 입장
-            socket.on('joined', function(data) {
-                console.log("📥 플레이어 입장:", data);
-                SendMessage('ServerManager', 'OnPlayerJoined', JSON.stringify(data));
+            // ✅ 게임 데이터 수신 (서버의 gameData 이벤트)
+            socket.on('gameData', function(data) {
+                console.log("📥 게임 데이터 수신:", data);
+                SendMessage('ServerManager', 'OnGameDataReceived', JSON.stringify(data));
             });
             
-            // 방 꽉참
-            socket.on('roomFull', function(message) {
-                console.log("⚠️ 방 만원:", message);
-                SendMessage('ServerManager', 'OnRoomFull', message);
+            // ✅ 플레이어 목록 업데이트
+            socket.on('playerList', function(players) {
+                console.log("📥 플레이어 목록:", players);
+                
+                // 플레이어 수 계산
+                var playerCount = 0;
+                for (var key in players) {
+                    if (players.hasOwnProperty(key) && players[key] !== null) {
+                        playerCount++;
+                    }
+                }
+                
+                console.log("👥 현재 플레이어 수:", playerCount);
+                
+                // C#에서 파싱 가능한 형태로 전송
+                var jsonPayload = JSON.stringify({ 
+                    playerCount: playerCount,
+                    players: players
+                });
+                
+                SendMessage('ServerManager', 'OnPlayerListReceived', jsonPayload);
             });
             
-            // 플레이어 목록 업데이트
-            socket.on('playerList', function(data) {
-                console.log("📥 플레이어 목록:", data);
-                SendMessage('ServerManager', 'OnPlayerListUpdated', JSON.stringify(data));
+            // ✅ Phase 변경
+            socket.on('phaseChange', function(phase) {
+                console.log("📥 Phase 변경:", phase);
+                window.currentGamePhase = phase;  // Phase 업데이트
+                SendMessage('ServerManager', 'OnPhaseChanged', phase);
             });
             
             // 터렛 각도 업데이트
@@ -85,10 +123,16 @@ mergeInto(LibraryManager.library, {
                 SendMessage('ServerManager', 'OnUpgradeApplied', JSON.stringify(data));
             });
             
-            // Phase 변경
-            socket.on('phaseChange', function(phase) {
-                console.log("📥 Phase 변경:", phase);
-                SendMessage('ServerManager', 'OnPhaseChanged', phase);
+            // 플레이어 입장 (모바일 전용이지만 혹시 몰라서)
+            socket.on('joined', function(data) {
+                console.log("📥 플레이어 입장:", data);
+                SendMessage('ServerManager', 'OnPlayerJoined', JSON.stringify(data));
+            });
+            
+            // 방 꽉참
+            socket.on('roomFull', function(message) {
+                console.log("⚠️ 방 만원:", message);
+                SendMessage('ServerManager', 'OnRoomFull', message);
             });
             
             console.log("✅ Socket.IO 이벤트 리스너 등록 완료");
@@ -98,10 +142,15 @@ mergeInto(LibraryManager.library, {
     // Unity 클라이언트 등록
     RegisterUnityClient: function() {
         if (window.unitySocket && window.unitySocket.connected) {
-            console.log("📤 Unity 클라이언트 등록 전송");
-            window.unitySocket.emit('registerUnity', { type: 'unity' });
+            var registrationData = {
+                connectType: "UNITY_WEBGL",
+                currentPhase: window.currentGamePhase || 'prepare'
+            };
+            console.log("📤 Unity 클라이언트 수동 등록 전송:", registrationData);
+            window.unitySocket.emit('registerUnity', registrationData);
             return true;
         }
+        console.warn("⚠️ Socket 미연결 상태");
         return false;
     },
     
@@ -122,11 +171,11 @@ mergeInto(LibraryManager.library, {
                 }
                 return true;
             } catch (e) {
-                console.error("❌ 전송 오류:", e);
+                console.error("❌ 전송 오류:", eventName, e);
                 return false;
             }
         } else {
-            console.warn("⚠️ Socket 미연결 상태");
+            console.warn("⚠️ Socket 미연결 상태. 전송 실패:", eventName);
             return false;
         }
     },
@@ -143,5 +192,12 @@ mergeInto(LibraryManager.library, {
             window.unitySocket.disconnect();
             window.unitySocket = null;
         }
+    },
+    
+    // ✅ Phase 업데이트 함수 (C#에서 Phase 변경 시 호출)
+    UpdateCurrentPhase: function(phasePtr) {
+        var phase = UTF8ToString(phasePtr);
+        window.currentGamePhase = phase;
+        console.log("📝 Unity Phase 업데이트:", phase);
     }
 });

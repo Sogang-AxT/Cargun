@@ -18,7 +18,8 @@ public class ServerGameData
     public int[] turretPlayer;
 }
 
-public class ServerManager : MonoBehaviour {
+public class ServerManager : MonoBehaviour
+{
     public static UnityEvent<GCEnumManager.GAMEPHASE> OnBroadcastPhaseChange = new();
     private readonly string _serverURL = "https://mgtul.duckdns.org";
 
@@ -138,6 +139,9 @@ public class ServerManager : MonoBehaviour {
                     {
                         ServerDataManager.Turret_Player = turretPlayerArray;
                     }
+
+                    // Debug.Log($"[GameData] TotalPlayer: {ServerDataManager.TotalPlayer}");
+                    // TODO: 조이스틱 입력
                 }
                 catch (System.Exception ex)
                 {
@@ -164,7 +168,7 @@ public class ServerManager : MonoBehaviour {
 
                     var data = JObject.Parse(rawJsonPlayerList);
                     Debug.Log($"[PlayerList] 플레이어 수: {data.Count}");
-                    
+
                     // TODO: 플레이어 로그인; TotalPlayer 갱신하도록 수정해야
                     GameManager.OnPlayerJoin.Invoke(data.Count);
                 }
@@ -258,6 +262,30 @@ public class ServerManager : MonoBehaviour {
         }
         catch (System.Exception ex) {
             Debug.LogError("[Error] WebGL Game Data Parsing Error: " + ex.Message);
+        }
+    }
+
+    // ✅ 플레이어 목록 수신 함수 추가! (jslib에서 호출)
+    public void OnPlayerListReceived(string jsonData) {
+        try {
+            var parser = new SimpleJSONParser();
+            var data = parser.Parse(jsonData) as Dictionary<string, object>;
+
+            if (data == null) return;
+
+            // playerCount 추출
+            int playerCount = 0;
+            if (data.ContainsKey("playerCount")) {
+                playerCount = System.Convert.ToInt32(data["playerCount"]);
+            }
+
+            Debug.Log($"[PlayerList] 플레이어 수: {playerCount} (WebGL)");
+            
+            // GameManager에 플레이어 입장 알림
+            GameManager.OnPlayerJoin.Invoke(playerCount);
+        }
+        catch (System.Exception ex) {
+            Debug.LogError("[Error] WebGL PlayerList Parsing Error: " + ex.Message);
         }
     }
 

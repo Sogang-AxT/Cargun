@@ -8,6 +8,8 @@ TagManager:
   - Enemy
   - Wall
   - Item
+  - FxTemporaire
+  - Bomb
   layers:
   - Default
   - TransparentFX

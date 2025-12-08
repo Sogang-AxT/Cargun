@@ -237,9 +237,29 @@ public class BombBox : MonoBehaviour
                     Destroy(fx, 5f);
                 }
 
+                // Bomb 오브젝트 생성
+                CreateBombObject();
+
                 Destroy(gameObject);
             }
         }
+    }
+
+    // Bomb 오브젝트 생성
+    void CreateBombObject()
+    {
+        // 빈 오브젝트 생성
+        GameObject bomb = new GameObject("Bomb");
+        bomb.transform.position = transform.position;
+        bomb.tag = "Bomb";
+
+        // CircleCollider2D 추가 및 설정
+        CircleCollider2D collider = bomb.AddComponent<CircleCollider2D>();
+        collider.isTrigger = true;
+        collider.radius = 3f;
+
+        // 0.5초 후 파괴
+        Destroy(bomb, 0.5f);
     }
 
     // 피격 효과 코루틴

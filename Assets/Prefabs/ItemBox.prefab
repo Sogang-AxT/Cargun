@@ -80,7 +80,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 2
   m_Sprite: {fileID: -2639993329033232781, guid: f7c437504584e964686bb0bee5b25d6b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -105,14 +105,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemBox
   ItemList:
-  - {fileID: 304552219121113138, guid: cffb5b66cb040584eb803db32ee84525, type: 3}
-  - {fileID: 304552219121113138, guid: cffb5b66cb040584eb803db32ee84525, type: 3}
-  - {fileID: 304552219121113138, guid: cffb5b66cb040584eb803db32ee84525, type: 3}
+  - {fileID: 4806394283298367333, guid: f0bc9483442b2cd4082d7d549c1f05f6, type: 3}
   - {fileID: 4806394283298367333, guid: 8a2e2f022cf998c44bfd8b20fa5522d9, type: 3}
-  - {fileID: 4806394283298367333, guid: 8a2e2f022cf998c44bfd8b20fa5522d9, type: 3}
-  - {fileID: 4806394283298367333, guid: 8a2e2f022cf998c44bfd8b20fa5522d9, type: 3}
-  DropCount: 3
-  hp: 10
+  - {fileID: 4806394283298367333, guid: 6461275b8cd0dbd4b8cb95ff589f0b9a, type: 3}
+  DropCount: 1
+  hp: 5
   speed: 2
 --- !u!61 &3806721989400218244
 BoxCollider2D:
@@ -152,7 +149,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 6.04, y: 6.91}
+    oldSize: {x: 6.0437183, y: 6.9100003}
     newSize: {x: 6.04, y: 6.91}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

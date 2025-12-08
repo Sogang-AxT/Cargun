@@ -2,6 +2,13 @@ fileFormatVersion: 2
 guid: 615fb1979dae6af4bb31040fe927cdcd
 labels:
 - Nebula
+AssetOrigin:
+  serializedVersion: 1
+  productId: 27662
+  packageName: 2D Space Kit
+  packageVersion: Initial 2
+  assetPath: Assets/2D Space Kit/Background Elements/Dust and Nebulae/EM Cloud (3).png
+  uploadId: 46238
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,14 +104,14 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: WebGL
-    maxTextureSize: 256
+    maxTextureSize: 128
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 3
     textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
+    overridden: 1
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
@@ -130,10 +137,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 27662
-  packageName: 2D Space Kit
-  packageVersion: Initial 2
-  assetPath: Assets/2D Space Kit/Background Elements/Dust and Nebulae/EM Cloud (3).png
-  uploadId: 46238
