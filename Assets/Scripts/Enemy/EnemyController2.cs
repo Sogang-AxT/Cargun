@@ -75,6 +75,12 @@ public class EnemyController2 : MonoBehaviour
 
     void Die()
     {
+        // Hit 사운드 재생
+        if (SFX_Manager.instance != null)
+        {
+            SFX_Manager.instance.PlayRandomHitSound();
+        }
+
         // DieVFX를 현재 위치에 생성
         if (DieVFX != null)
         {

@@ -6,7 +6,7 @@ public class EnemySpawnManager : MonoBehaviour
     public GameObject Warning;
     public GameObject Enemy1, Enemy2, Enemy3;
     private Camera mainCamera;
-    private float spawnInterval = 3f; // 3초마다 생성
+    private float spawnInterval = 2f; // 2초마다 생성
     private float spawnTimer = 0f;
     private float extraDistance = 1f; // 카메라 경계에서 추가로 더 먼 거리
 
@@ -72,6 +72,12 @@ public class EnemySpawnManager : MonoBehaviour
         // Warning 생성 위치 계산 (카메라 경계 안쪽 (0,0,0) 방향으로 1만큼)
         Vector3 warningPosition = GetWarningPosition(side);
         Instantiate(Warning, warningPosition, Quaternion.identity);
+
+        // Warning 사운드 재생 추가
+        if (SFX_Manager.instance != null)
+        {
+            SFX_Manager.instance.PlayWarningSound();
+        }
 
         // 웨이브 생성 중심점 설정 (Warning 위치를 기준으로!)
         waveSpawnCenter = GetWaveSpawnCenterFromWarning(warningPosition);

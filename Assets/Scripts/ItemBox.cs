@@ -222,6 +222,12 @@ public class ItemBox : MonoBehaviour
             // HP 감소
             hp--;
 
+            // BoxHit 사운드 재생 추가
+            if (SFX_Manager.instance != null)
+            {
+                SFX_Manager.instance.PlayBoxHitSound();
+            }
+
             // 피격 효과
             if (!isHit && spriteRenderer != null)
             {

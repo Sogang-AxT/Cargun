@@ -78,6 +78,12 @@ public class ItemSample : MonoBehaviour
             // Bullet 오브젝트 비활성화 (Object Pool로 반환)
             other.gameObject.SetActive(false);
 
+            // Item 사운드 재생 추가
+            if (SFX_Manager.instance != null)
+            {
+                SFX_Manager.instance.PlayItemSound();
+            }
+
             // 수리 아이템이면 ShipManager의 HP 복구
             if (IsRepairItem)
             {

@@ -151,6 +151,12 @@ public class ShipManager : MonoBehaviour
         if (isDestroyed) return;
         isDestroyed = true;
 
+        // Exp1 사운드 재생 추가
+        if (SFX_Manager.instance != null && SFX_Manager.instance.Exp1 != null)
+        {
+            AudioSource.PlayClipAtPoint(SFX_Manager.instance.Exp1, Camera.main.transform.position);
+        }
+
         // 모든 fire와 자식들 끄기
         foreach (var fire in fires)
         {

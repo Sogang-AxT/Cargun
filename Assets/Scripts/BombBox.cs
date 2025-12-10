@@ -221,6 +221,12 @@ public class BombBox : MonoBehaviour
             // HP 감소
             hp--;
 
+            // BoxHit 사운드 재생 추가
+            if (SFX_Manager.instance != null)
+            {
+                SFX_Manager.instance.PlayBoxHitSound();
+            }
+
             // 피격 효과
             if (!isHit && spriteRenderer != null)
             {
@@ -235,6 +241,12 @@ public class BombBox : MonoBehaviour
                 {
                     GameObject fx = Instantiate(FX, transform.position, Quaternion.identity);
                     Destroy(fx, 5f);
+                }
+
+                // Exp2 사운드 재생 추가
+                if (SFX_Manager.instance != null)
+                {
+                    SFX_Manager.instance.PlayExplosion2Sound();
                 }
 
                 // Bomb 오브젝트 생성
